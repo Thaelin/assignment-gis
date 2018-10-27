@@ -18,16 +18,16 @@ Build a map-based application, which lets the user see geo-based data on a map a
 
 ## My project
 
-Fill in (either in English, or in Slovak):
+Weather Check
 
-**Application description**: `<fill in>`
+**Application description**: 
+Application will be able to show huge variety of weather data related to given coordinates/city name. 
 
-**Data source**: Weather data will be downloaded through OpenWeatherMap API (there is one limitation - max. 60 API requests per minute - should be fine). Other data, like point of interests will be downloaded from other OpenStreetMap data sources. 
+**Data source**: 
+Weather data will be downloaded through OpenWeatherMap API (there is one limitation - max. 60 API requests per minute - should be fine). Other data, like point of interests will be downloaded from other OpenStreetMap data sources. 
 
 **Technologies used**: 
 - Node.js for business logic and communication with DB
 - PostgreSQL as a RDBMS
 - HTML, CSS, JS for frontend representation
 - Mapbox
-- OpenWeatherMap
-- OpenStreetMap
