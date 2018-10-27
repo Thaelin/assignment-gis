@@ -22,6 +22,12 @@ Fill in (either in English, or in Slovak):
 
 **Application description**: `<fill in>`
 
-**Data source**: `<fill in>`
+**Data source**: Weather data will be downloaded through OpenWeatherMap API (there is one limitation - max. 60 API requests per minute - should be fine). Other data, like point of interests will be downloaded from other OpenStreetMap data sources. 
 
-**Technologies used**: `<fill in>`
+**Technologies used**: 
+- Node.js for business logic and communication with DB
+- PostgreSQL as a RDBMS
+- HTML, CSS, JS for frontend representation
+- Mapbox
+- OpenWeatherMap
+- OpenStreetMap
