@@ -21,7 +21,7 @@ Build a map-based application, which lets the user see geo-based data on a map a
 Weather Check
 
 **Application description**: 
-Application will be able to show huge variety of weather data related to given coordinates/city name. 
+Application will be able to show huge variety of weather data related to given coordinates/city name. It's most interesting part should be finding relations between weather and traffic data in selected region.
 
 **Data source**: 
 Weather data will be downloaded through OpenWeatherMap API (there is one limitation - max. 60 API requests per minute - should be fine). Other data, like point of interests will be downloaded from other OpenStreetMap data sources. 
