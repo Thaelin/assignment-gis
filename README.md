@@ -18,7 +18,7 @@ Build a map-based application, which lets the user see geo-based data on a map a
 
 ## My project
 
-Weather Check
+Weather makes drivers bad
 
 **Application description**: 
 Application will be able to show huge variety of weather data related to given coordinates/city name. It's most interesting part should be finding relations between weather and traffic data in selected region.
