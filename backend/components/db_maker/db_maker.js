@@ -3,7 +3,7 @@ class DbMaker {
         this.pool = pool;
     }
 
-    pupulateCityTable() {
+    populateCityTable() {
         const cityListJson = require('./resources/city.list.json');
 
         this.pool.query('DELETE FROM city', function(err) {

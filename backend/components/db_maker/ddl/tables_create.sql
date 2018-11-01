@@ -1,17 +1,13 @@
 -- Table: public.city
 
--- DROP TABLE public.city;
-
 CREATE TABLE public.city
 (
-    id integer NOT NULL DEFAULT nextval('city_id_seq'::regclass),
-    name character(50) COLLATE pg_catalog."default" NOT NULL,
-    country character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    name character varying(100) NOT NULL,
+    country character varying(10) NOT NULL,
     coord point NOT NULL,
+    api_city_id integer NOT NULL,
     CONSTRAINT city_pkey PRIMARY KEY (id)
-)
-WITH (
-    OIDS = FALSE
 )
 TABLESPACE pg_default;
 
