@@ -36,7 +36,7 @@ pool.query('SELECT version()', function(err, res) {
 });
 
 function selectTracks() {
-    pool.query(' SELECT ogc_fid, ST_AsGeoJSON(ST_GeomFromWKB(wkb_geometry)), name FROM tracks', (err, res) => {
+    pool.query(' SELECT name, ST_AsGeoJSON(route), name FROM cycling_routes', (err, res) => {
         if (!err) {
             console.log('Received tracks data:');
             console.log(res);
