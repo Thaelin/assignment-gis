@@ -35,6 +35,20 @@ pool.query('SELECT version()', function(err, res) {
     }
 });
 
+function selectTracks() {
+    pool.query(' SELECT ogc_fid, ST_AsGeoJSON(ST_GeomFromWKB(wkb_geometry)), name FROM tracks', (err, res) => {
+        if (!err) {
+            console.log('Received tracks data:');
+            console.log(res);
+        }
+        else {
+            throw err;
+        }
+    });
+}
+
+selectTracks();
+
 if (dbMake || dbPopulate) {
     console.log('Initializing DB maker...');
     const dbMaker = new DbMaker(pool);
