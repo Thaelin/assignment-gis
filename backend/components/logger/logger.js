@@ -15,7 +15,7 @@ class Logger {
             streams: [
                 {
                     level: 'info',
-                    path: './logs/'+year+'-'+month+'-'+day+'.log'
+                    path: '/../../logs/'+year+'-'+month+'-'+day+'.log'
                 }
             ]
         });

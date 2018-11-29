@@ -34,7 +34,10 @@ class Main {
             });
             
             this.app.get('/cyclingRoutes', (req, res) => {
-                res.json(this.db.allCyclingRoutes());
+                console.log(this);
+                let data = this.db.allCyclingRoutes();
+                console.log('cyclingRoutes', data);
+                res.send(data);
             });
 
             this.app.use(express.static(path.join(__dirname, '../../../frontend')));

@@ -33,7 +33,7 @@ class Database {
     }
 
     allCyclingRoutes() {
-        this.pool.query('SELECT name, ST_AsGeoJSON(route), name FROM cycling_routes', (err, res) => {
+        this.pool.query('SELECT name, ST_AsGeoJSON(route) FROM cycling_routes', (err, res) => {
             if (!err) {
                 this.logger.info('Received tracks data:');
                 this.logger.info(res);
