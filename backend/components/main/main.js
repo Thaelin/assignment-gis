@@ -36,8 +36,15 @@ class Main {
             this.app.get('/cyclingRoutes', (req, res) => {
                 console.log(this);
                 let data = this.db.allCyclingRoutes();
-                console.log('cyclingRoutes', data);
-                res.send(data);
+                let parsedData = [];
+
+                // parse data to JSON
+                data.forEach((route) => {
+                    route.route = JSON.parse(route.route);
+                    parsedData.push(route);
+                });
+
+                res.json(parsedData);
             });
 
             this.app.use(express.static(path.join(__dirname, '../../../frontend')));
