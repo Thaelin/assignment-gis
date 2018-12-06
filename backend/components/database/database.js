@@ -32,18 +32,8 @@ class Database {
         }
     }
 
-    allCyclingRoutes() {
-        this.pool.query('SELECT name, ST_AsGeoJSON(route) FROM cycling_routes', (err, res) => {
-            if (!err) {
-                this.logger.info('Received tracks data:');
-                this.logger.info(res);
-                return res;
-            }
-            else {
-                this.logger.error(err);
-                return false;
-            }
-        });
+    allCyclingRoutes(callback) {
+        this.pool.query('SELECT name, ST_AsGeoJSON(route) AS route FROM cycling_routes', callback);
     }
 }
 
