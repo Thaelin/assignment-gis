@@ -1,20 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Mapbox APP</title>
+    <title>Smart cycling app</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
     <meta name="author" content="Jakub Hubert" />
+    <link href="css/styles.css" rel="stylesheet" />
     <link href="libs/mapbox/mapbox-gl.css" rel="stylesheet" />
-    <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
-    </style>
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Smart cycling app</a>
+            <button class="navbar-toggler" type="button" 
+                data-toggle="collapse" data-target="#navbarNavAltMarkup" 
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                <a class="nav-item nav-link active" href="#">Všetky cyklistické trasy</a>
+                <a class="nav-item nav-link" href="#">Vyhľadať cyklistické trasy</a>
+                <a class="nav-item nav-link" href="#">O projekte</a>
+                </div>
+            </div>
+        </div>
+    </nav>
     <div id="map"></div>
     <script src="libs/mapbox/mapbox-gl.js"></script>
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

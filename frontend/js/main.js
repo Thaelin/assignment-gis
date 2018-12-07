@@ -5,9 +5,9 @@ $(document).ready(function() {
     var map = new mapboxgl.Map({
         container: 'map',
         center: [ 19.696058, 48.6737532 ],
-        zoom: 7.25,
+        zoom: 7.15,
         minZoom: 6.75,
-        style: 'mapbox://styles/mapbox/streets-v10'
+        style: 'mapbox://styles/flaytrue/cjpcl12fo22xq2snw85xbzsm3'
     });
 
     // load cycling routes
