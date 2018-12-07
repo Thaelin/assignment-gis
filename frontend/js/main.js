@@ -14,6 +14,15 @@ $(document).ready(function() {
     $.get('/api/cyclingRoutes', function(data) {
         console.log(data);
         data.forEach((route) => {
+            // add map markers
+            var startEl = document.createElement('div');
+            var finishEl = document.createElement('div');
+            startEl.className = 'marker-start';
+            finishEl.className = 'marker-finish';
+
+            new mapboxgl.Marker(startEl).setLngLat(route.route.coordinates[0][0]).addTo(map);
+            new mapboxgl.Marker(finishEl).setLngLat(route.route.coordinates[0][route.route.coordinates[0].length - 1]).addTo(map);
+
             map.addLayer({
                 "id": "route_" + route.name,
                 "type": "line",
@@ -30,7 +39,7 @@ $(document).ready(function() {
                     "line-cap": "round"
                 },
                 "paint": {
-                    "line-color": "#FF1493",
+                    "line-color": randomColor(),
                     "line-width": 2
                 }
             });
