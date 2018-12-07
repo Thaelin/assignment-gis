@@ -12,7 +12,8 @@ class Main {
         this.initLoggerComponent();
         this.initDatabaseComponent();
         this.initApi();
-        this.initWeatherActualize();
+        //this.initWeatherActualize();
+        require('../swagger/swagger')(this.app, this.logger);
     }
 
     initLoggerComponent() {
@@ -35,10 +36,10 @@ class Main {
                 res.sendFile(path.join(__dirname, '../../../frontend/index.html'));
             });
             
-            this.app.get('/cyclingRoutes', (req, res) => {
+            this.app.get('/api/cyclingRoutes', (req, res) => {
                 this.db.allCyclingRoutes((error, data) => {
                     if (error) {
-                        this.logger.erorr(error);
+                        this.logger.error(error);
                         throw new Error;
                     }
                     else {
@@ -57,6 +58,7 @@ class Main {
                 });
             });
 
+            console.log(path.join(__dirname, '../../../frontend'))
             this.app.use(express.static(path.join(__dirname, '../../../frontend')));
 
             this.app.listen(config.webserver.port);

@@ -11,7 +11,7 @@ $(document).ready(function() {
     });
 
     // load cycling routes
-    $.get('/cyclingRoutes', function(data) {
+    $.get('/api/cyclingRoutes', function(data) {
         console.log(data);
         data.forEach((route) => {
             map.addLayer({

@@ -1,0 +1,153 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Dokumentácia API pre Smart cycling app",
+    "version": "1.0.0",
+    "title": "Smart cycling API"
+  },
+  "host": "localhost:3000",
+  "basePath": "/api",
+  "paths": {
+    "/cyclingRoutes": {
+      "get": {
+        "tags": [
+          "Cycling routes - all"
+        ],
+        "summary": "Returns all cycling routes",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Route"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error occured",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    },
+    "/cyclingRoutesFiltered": {
+      "post": {
+        "tags": [
+          "Cycling routes - filtered"
+        ],
+        "summary": "Returns filtered list of cycling routes",
+        "responses": {
+          "500": {
+            "description": "Internal server error occured",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Weather": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "format": "decimal"
+        },
+        "longitude": {
+          "type": "number",
+          "format": "decimal"
+        },
+        "timezone": {
+          "type": "string"
+        },
+        "time": {
+          "type": "number",
+          "format": "int"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Weather status described in text"
+        },
+        "icon": {
+          "type": "string",
+          "description": "Icon id that Dark Sky Api uses to graphically describe this type of weather"
+        },
+        "temperature": {
+          "type": "number",
+          "format": "decimal"
+        },
+        "humidity": {
+          "type": "number",
+          "format": "decimal"
+        },
+        "pressure": {
+          "type": "number",
+          "format": "decimal"
+        },
+        "windSpeed": {
+          "type": "number",
+          "format": "decimal"
+        },
+        "visibility": {
+          "type": "number",
+          "format": "decimal"
+        }
+      }
+    },
+    "Route": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "weather": {
+          "type": "object",
+          "properties": {
+            "weatherPoints": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Weather"
+              }
+            }
+          }
+        },
+        "route": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Point"
+          }
+        }
+      }
+    },
+    "Point": {
+      "type": "object",
+      "properties": {
+        "lat": {
+          "type": "number"
+        },
+        "lon": {
+          "type": "number"
+        }
+      }
+    },
+    "ApiError": {
+      "type": "object",
+      "properties": {
+        "errorCode": {
+          "type": "string"
+        },
+        "errorMsg": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
