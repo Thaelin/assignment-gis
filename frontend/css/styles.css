@@ -29,3 +29,12 @@ body {
     border-radius: 50%;
     cursor: pointer;
 }
+
+.mapboxgl-popup {
+    max-width: 300px;
+}
+
+.mapboxgl-popup-content {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+}

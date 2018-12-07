@@ -20,8 +20,16 @@ $(document).ready(function() {
             startEl.className = 'marker-start';
             finishEl.className = 'marker-finish';
 
-            new mapboxgl.Marker(startEl).setLngLat(route.route.coordinates[0][0]).addTo(map);
-            new mapboxgl.Marker(finishEl).setLngLat(route.route.coordinates[0][route.route.coordinates[0].length - 1]).addTo(map);
+            new mapboxgl.Marker(startEl)
+                .setLngLat(route.route.coordinates[0][0])
+                .setPopup(new mapboxgl.Popup({ offset: 25 })
+                .setHTML('<h3>Start</h3><p><b>Route:</b> ' + route.name + '</p>'))
+                .addTo(map);
+            new mapboxgl.Marker(finishEl)
+                .setLngLat(route.route.coordinates[0][route.route.coordinates[0].length - 1])
+                .setPopup(new mapboxgl.Popup({ offset: 25 })
+                .setHTML('<h3>Finish</h3><p><b>Route:</b> ' + route.name + '</p>'))
+                .addTo(map);
 
             map.addLayer({
                 "id": "route_" + route.name,
