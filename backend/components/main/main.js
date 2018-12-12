@@ -49,7 +49,8 @@ class Main {
                         data.rows.forEach((route) => {
                             parsedData.push({
                                 name: route.name,
-                                route: JSON.parse(route.route)
+                                route: JSON.parse(route.route),
+                                length: route.length
                             });
                         });
 

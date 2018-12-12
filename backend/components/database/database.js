@@ -33,7 +33,7 @@ class Database {
     }
 
     allCyclingRoutes(callback) {
-        this.pool.query('SELECT name, ST_AsGeoJSON(route) AS route FROM cycling_routes', callback);
+        this.pool.query('SELECT name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes', callback);
     }
 }
 

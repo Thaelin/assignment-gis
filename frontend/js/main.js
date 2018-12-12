@@ -22,13 +22,23 @@ $(document).ready(function() {
 
             new mapboxgl.Marker(startEl)
                 .setLngLat(route.route.coordinates[0][0])
-                .setPopup(new mapboxgl.Popup({ offset: 25 })
-                .setHTML('<h3>Start</h3><p><b>Route:</b> ' + route.name + '</p>'))
+                .setPopup(
+                    new mapboxgl.Popup({ offset: 25 })
+                        .setHTML(
+                            `<h3>Start</h3><p><b>Route:</b> ${route.name}</p>
+                            <p><b>Length:</b> ${route.length.toFixed(2)} km</p>`
+                        )
+                )
                 .addTo(map);
             new mapboxgl.Marker(finishEl)
                 .setLngLat(route.route.coordinates[0][route.route.coordinates[0].length - 1])
-                .setPopup(new mapboxgl.Popup({ offset: 25 })
-                .setHTML('<h3>Finish</h3><p><b>Route:</b> ' + route.name + '</p>'))
+                .setPopup(
+                    new mapboxgl.Popup({ offset: 25 })
+                        .setHTML(
+                            `<h4>FINISH</h4><p><b>Route:</b> ${route.name}</p>
+                            <p><b>Length:</b> ${route.length.toFixed(2)} km</p>`
+                        )
+                )
                 .addTo(map);
 
             map.addLayer({
@@ -47,8 +57,8 @@ $(document).ready(function() {
                     "line-cap": "round"
                 },
                 "paint": {
-                    "line-color": randomColor(),
-                    "line-width": 2
+                    "line-color": randomColor({ luminosity: 'dark' }),
+                    "line-width": 3
                 }
             });
         });

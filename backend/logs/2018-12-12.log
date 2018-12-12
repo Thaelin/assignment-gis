@@ -1,0 +1,6 @@
+{"name":"Smart cycling app logger","hostname":"Cmaa-Lenovo-G570","pid":4810,"level":30,"msg":"Logger component has been initialized","time":"2018-12-12T13:09:56.495Z","v":0}
+{"name":"Smart cycling app logger","hostname":"Cmaa-Lenovo-G570","pid":4810,"level":30,"msg":"Swagger UI has been initialised. Live API doc available /api-docs URL","time":"2018-12-12T13:09:56.915Z","v":0}
+{"name":"Smart cycling app logger","hostname":"Cmaa-Lenovo-G570","pid":4810,"level":30,"msg":"PostgreSQL version is: PostgreSQL 10.6 (Ubuntu 10.6-0ubuntu0.18.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0, 64-bit","time":"2018-12-12T13:09:57.203Z","v":0}
+{"name":"Smart cycling app logger","hostname":"Cmaa-Lenovo-G570","pid":4949,"level":30,"msg":"Logger component has been initialized","time":"2018-12-12T13:12:53.297Z","v":0}
+{"name":"Smart cycling app logger","hostname":"Cmaa-Lenovo-G570","pid":4949,"level":30,"msg":"Swagger UI has been initialised. Live API doc available /api-docs URL","time":"2018-12-12T13:12:53.591Z","v":0}
+{"name":"Smart cycling app logger","hostname":"Cmaa-Lenovo-G570","pid":4949,"level":30,"msg":"PostgreSQL version is: PostgreSQL 10.6 (Ubuntu 10.6-0ubuntu0.18.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 7.3.0-16ubuntu3) 7.3.0, 64-bit","time":"2018-12-12T13:12:53.609Z","v":0}

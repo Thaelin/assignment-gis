@@ -13,9 +13,9 @@ body {
 .marker-start {
     background-image: url('../assets/map-marker-start.png');
     background-size: cover;
-    width: 40px;
-    height: 40px;
-    margin-bottom: 20px;
+    width: 20px;
+    height: 20px;
+    margin-bottom: 10px;
     border-radius: 50%;
     cursor: pointer;
 }
@@ -23,9 +23,9 @@ body {
 .marker-finish {
     background-image: url('../assets/map-marker-finish.png');
     background-size: cover;
-    width: 40px;
-    height: 40px;
-    margin-bottom: 20px;
+    width: 20px;
+    height: 20px;
+    margin-bottom: 10px;
     border-radius: 50%;
     cursor: pointer;
 }
