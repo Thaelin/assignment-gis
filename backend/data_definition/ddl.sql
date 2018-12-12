@@ -6,6 +6,7 @@ CREATE TYPE WEATHER_TYPE AS (
     humidity REAL,
     pressure REAL,
     icon VARCHAR(150),
+    description VARCHAR(255),
     weather_index REAL
 );
 

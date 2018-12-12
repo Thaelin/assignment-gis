@@ -72,7 +72,8 @@ class Main {
     initWeatherActualize() {
         if (this.logger && this.db) {
             if (config.weather.apiToken != "undefined") {
-                setInterval(this.actualizeWeather.bind(this), 1000);
+                setInterval(this.actualizeWeather.bind(this), config.weather.actualizationTimerMs | 300000);
+                this.actualizeWeather();
             }
             else {
                 throw 'Weather actualizer can not start because Dark Sky API token was not provided in config.json';
@@ -95,35 +96,64 @@ class Main {
                 if (res) {
                     res.rows.forEach((item) => {
                         console.log(item);
-                        let startPoint = JSON.parse(item.route_start);
-                        let endPoint = JSON.parse(item.route_finish);
-
-                        http.get(
-                            `${requestUrl}lat=${startPoint.coordinates[1]}&lon=${startPoint.coordinates[0]}&APPID=${config.weather.apiToken}&units=metric`
-                            , 
-                            response => {
-                                let data = '';
-                        
-                                // a chunk of data has been received
-                                response.on('data', (chunk) => {
-                                    data += chunk;
-                                });
-                    
-                                // the whole response has been received
-                                response.on('end', () => {
-                                    let apiResponse = JSON.parse(data);
-                                    this.logger.info('Received weather data from OpenWeatherMap API: ' + apiResponse);
-                                    console.log(apiResponse);
-
-                                    this.logger.info('Sending weather data object to client: ' + weather);
-                                    
-                                    // here will be DB insert
-                    
-                                });
+                        let points = [
+                            {
+                                type: 'START',
+                                data: JSON.parse(item.route_start)
+                            },
+                            {
+                                type: 'FINISH',
+                                data: JSON.parse(item.route_finish)
                             }
-                        ).on('error', error => {
-                            this.logger.error('Error occured while getting actual weather data: ' + error);
+                        ];
+
+                        points.forEach(point => {
+                            http.get(
+                                `${requestUrl}lat=${point.data.coordinates[1]}&lon=${point.data.coordinates[0]}&APPID=${config.weather.apiToken}&units=metric`
+                                , 
+                                response => {
+                                    let data = '';
+                            
+                                    // a chunk of data has been received
+                                    response.on('data', (chunk) => {
+                                        data += chunk;
+                                    });
+                        
+                                    // the whole response has been received
+                                    response.on('end', () => {
+                                        let apiResponse = JSON.parse(data);
+                                        this.logger.info('Received weather data from OpenWeatherMap API: ' + apiResponse);
+                                        console.log(apiResponse);
+    
+                                        //his.logger.info('Sending weather data object to client: ' + weather);
+                                        let sensors= {
+                                            temperature: apiResponse.main.temp,
+                                            humidity: apiResponse.main.humidity,
+                                            pressure: apiResponse.main.pressure,
+                                        };
+                                        let weather = {
+                                            icon: apiResponse.weather.length > 0 ? apiResponse.weather[0].icon : undefined,
+                                            description: apiResponse.weather.length > 0 ? apiResponse.weather[0].description : undefined,
+                                            index: 1
+                                        };
+                                        // here will be DB insert
+                                        this.db.saveWeatherData(item.fid, point.type, sensors, weather, (error, response) => {
+                                            if (error) {
+                                                this.logger.error('Error while saving weather data for track points: ' + error);
+                                                console.log(error);
+                                            }
+                                            else {
+                                                this.logger.info('Weather data for track points were saved successfully, DB response: ' + response);
+                                                console.log(response);
+                                            }
+                                        });
+                                    });
+                                }
+                            ).on('error', error => {
+                                this.logger.error('Error occured while getting actual weather data: ' + error);
+                            });
                         });
+                        
                     });
                 }
             }

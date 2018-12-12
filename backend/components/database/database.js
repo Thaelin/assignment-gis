@@ -42,20 +42,22 @@ class Database {
             SELECT 
                 fid,
                 ST_AsGeoJSON(ST_StartPoint(ST_LineMerge(route))) AS route_start, 
-                ST_AsGeoJSON(ST_EndPoint(ST_LineMerge(route))) AS route_end
+                ST_AsGeoJSON(ST_EndPoint(ST_LineMerge(route))) AS route_finish
             FROM cycling_routes
             `,
             callback
         );
     }
 
-    saveWeatherData(routeId, temp, press, humidity, icon, type, callback) {
+    saveWeatherData(routeId, pointType, sensors, weather, callback) {
         this.pool.query(
             `
-            INSERT INTO cycling_routes_weather
-            cycling
-            `
-        )
+            INSERT INTO cycling_routes_weather (cycling_route_id, point_type, weather, measure_date)
+            VALUES($1, $2, ($3, $4, $5, $6, $7, $8), $9)
+            `,
+            [ routeId, pointType, sensors.temperature, sensors.humidity, sensors.pressure, weather.icon, weather.description, weather.index, new Date() ]
+        ),
+        callback
     }
 }
 
