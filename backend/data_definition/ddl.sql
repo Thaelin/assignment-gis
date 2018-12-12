@@ -1,10 +1,12 @@
 DROP TABLE IF EXISTS cycling_routes;
 DROP TABLE IF EXISTS cycling_routes_weather;
 
-CREATE TYPE WEATHER_TYPE (
-    temperature NUMERIC,
-    humidity NUMERIC,
-    weather_index NUMERIC
+CREATE TYPE WEATHER_TYPE AS (
+    temperature REAL,
+    humidity REAL,
+    pressure REAL,
+    icon VARCHAR(150),
+    weather_index REAL
 );
 
 CREATE TABLE cycling_routes (
@@ -17,11 +19,11 @@ CREATE TABLE cycling_routes (
 CREATE TABLE cycling_routes_weather (
     id SERIAL,
     cycling_route_id INTEGER,
-    point_number INTEGER,
+    point_type VARCHAR(50),
     weather WEATHER_TYPE,
-    measure_date DATETIME,
+    measure_date TIMESTAMP,
     CONSTRAINT cycling_routes_weather_pkey PRIMARY KEY (id),
-    CONSTRAINT cycling_routes_fkey FOREIGN KEY(cycling_route_id)
+    CONSTRAINT cycling_routes_fkey FOREIGN KEY(cycling_route_id) REFERENCES cycling_routes (fid)
 );
 
 CREATE OR REPLACE FUNCTION import_data() RETURNS VOID AS $$

@@ -35,6 +35,28 @@ class Database {
     allCyclingRoutes(callback) {
         this.pool.query('SELECT name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes', callback);
     }
+
+    getRouteBoundaries(callback) {
+        this.pool.query(
+            `
+            SELECT 
+                fid,
+                ST_AsGeoJSON(ST_StartPoint(ST_LineMerge(route))) AS route_start, 
+                ST_AsGeoJSON(ST_EndPoint(ST_LineMerge(route))) AS route_end
+            FROM cycling_routes
+            `,
+            callback
+        );
+    }
+
+    saveWeatherData(routeId, temp, press, humidity, icon, type, callback) {
+        this.pool.query(
+            `
+            INSERT INTO cycling_routes_weather
+            cycling
+            `
+        )
+    }
 }
 
 module.exports = Database;

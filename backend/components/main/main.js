@@ -1,5 +1,5 @@
 const express = require('express');
-const https = require('https');
+const http = require('http');
 const Logger = require('../../components/logger/logger.js');
 const Database = require('../../components/database/database.js');
 const path = require('path');
@@ -12,7 +12,7 @@ class Main {
         this.initLoggerComponent();
         this.initDatabaseComponent();
         this.initApi();
-        //this.initWeatherActualize();
+        this.initWeatherActualize();
         require('../swagger/swagger')(this.app, this.logger);
     }
 
@@ -72,7 +72,7 @@ class Main {
     initWeatherActualize() {
         if (this.logger && this.db) {
             if (config.weather.apiToken != "undefined") {
-                setInterval(this.actualizeWeather, config.weather.actualizationTimerMs | 60000);
+                setInterval(this.actualizeWeather.bind(this), 1000);
             }
             else {
                 throw 'Weather actualizer can not start because Dark Sky API token was not provided in config.json';
@@ -84,46 +84,44 @@ class Main {
     }
 
     actualizeWeather() {
-        var requestUrl = undefined;
+        var requestUrl = 'http://api.openweathermap.org/data/2.5/weather?';
 
-        this.db.allCyclingRoutes((err, res) => {
+        this.db.getRouteBoundaries((err, res) => {
             if (err) {
-                this.logger.error('Error while selecting all cycling routes');
-                throw 'Error while selecting all cycling routes';
+                this.logger.error('Error while selecting cycling route boundaries');
+                throw 'Error while selecting cycling route boundaries';
             }
             else {
                 if (res) {
                     res.rows.forEach((item) => {
-                        https.get(requestUrl + config.weather.apiToken, response => {
-                            let data = 'https://api.darksky.net/forecast/'+config.weather.apiToken+'/'+req.params.latitude+','+req.params.longitude+'?units=si'
+                        console.log(item);
+                        let startPoint = JSON.parse(item.route_start);
+                        let endPoint = JSON.parse(item.route_finish);
+
+                        http.get(
+                            `${requestUrl}lat=${startPoint.coordinates[1]}&lon=${startPoint.coordinates[0]}&APPID=${config.weather.apiToken}&units=metric`
+                            , 
+                            response => {
+                                let data = '';
+                        
+                                // a chunk of data has been received
+                                response.on('data', (chunk) => {
+                                    data += chunk;
+                                });
                     
-                            // a chunk of data has been received
-                            response.on('data', (chunk) => {
-                                data += chunk;
-                            });
-                
-                            // the whole response has been received
-                            response.on('end', () => {
-                                let apiResponse = JSON.parse(data);
-                                this.logger.info('Received weather data from Dark Sky API: ' + apiResponse);
-                                let weather = {
-                                    latitude: apiResponse.latitude,
-                                    longitude: apiResponse.longitude,
-                                    timezone: apiResponse.timezone,
-                                    time: apiResponse.currently.time,
-                                    icon: apiResponse.currently.icon,
-                                    temperature: apiResponse.currently.temperature,
-                                    humidity: apiResponse.currently.humidity,
-                                    pressure: apiResponse.currently.pressure,
-                                    windSpeed: apiResponse.currently.windSpeed,
-                                    visibility: apiResponse.currently.visibility
-                                };
-                                this.logger.info('Sending weather data object to client: ' + weather);
-                                
-                                // here will be DB insert
-                
-                            });
-                        }).on('error', error => {
+                                // the whole response has been received
+                                response.on('end', () => {
+                                    let apiResponse = JSON.parse(data);
+                                    this.logger.info('Received weather data from OpenWeatherMap API: ' + apiResponse);
+                                    console.log(apiResponse);
+
+                                    this.logger.info('Sending weather data object to client: ' + weather);
+                                    
+                                    // here will be DB insert
+                    
+                                });
+                            }
+                        ).on('error', error => {
                             this.logger.error('Error occured while getting actual weather data: ' + error);
                         });
                     });
