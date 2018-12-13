@@ -59,7 +59,6 @@ class Main {
                 });
             });
 
-            console.log(path.join(__dirname, '../../../frontend'))
             this.app.use(express.static(path.join(__dirname, '../../../frontend')));
 
             this.app.listen(config.webserver.port);
@@ -73,7 +72,7 @@ class Main {
         if (this.logger && this.db) {
             if (config.weather.apiToken != "undefined") {
                 setInterval(this.actualizeWeather.bind(this), config.weather.actualizationTimerMs | 300000);
-                this.actualizeWeather();
+                //this.actualizeWeather();
             }
             else {
                 throw 'Weather actualizer can not start because Dark Sky API token was not provided in config.json';
@@ -87,15 +86,16 @@ class Main {
     actualizeWeather() {
         var requestUrl = 'http://api.openweathermap.org/data/2.5/weather?';
 
-        this.db.getRouteBoundaries((err, res) => {
+        this.db.getRouteMilestones((err, res) => {
             if (err) {
-                this.logger.error('Error while selecting cycling route boundaries');
-                throw 'Error while selecting cycling route boundaries';
+                this.logger.error('Error while selecting cycling route milestones');
+                throw 'Error while selecting cycling route milestones';
             }
             else {
                 if (res) {
                     res.rows.forEach((item) => {
                         console.log(item);
+                        // these weather points are essential for all routes
                         let points = [
                             {
                                 type: 'START',
@@ -106,6 +106,26 @@ class Main {
                                 data: JSON.parse(item.route_finish)
                             }
                         ];
+                        // routes longer than 30 km will have also a middle weather point
+                        if (item.length > 30) {
+                            points.push({
+                                type: 'MIDDLE',
+                                data: JSON.parse(item.route_middle)
+                            });
+                        }
+                        // routes longer than 100km will also have a first and third quarter weather points
+                        if (item.length > 100) {
+                            points.push(
+                                {
+                                    type: 'FIRSTQUARTER',
+                                    data: JSON.parse(item.route_first_quarter)
+                                },
+                                {
+                                    type: 'THIRDQUARTER',
+                                    data: JSON.parse(item.route_third_quarter)
+                                }
+                            );
+                        }
 
                         points.forEach(point => {
                             http.get(
@@ -122,31 +142,35 @@ class Main {
                                     // the whole response has been received
                                     response.on('end', () => {
                                         let apiResponse = JSON.parse(data);
-                                        this.logger.info('Received weather data from OpenWeatherMap API: ' + apiResponse);
-                                        console.log(apiResponse);
+                                        if (apiResponse.cod === 200) {
+                                            this.logger.info('Received weather data from OpenWeatherMap API: ' + apiResponse);
     
-                                        //his.logger.info('Sending weather data object to client: ' + weather);
-                                        let sensors= {
-                                            temperature: apiResponse.main.temp,
-                                            humidity: apiResponse.main.humidity,
-                                            pressure: apiResponse.main.pressure,
-                                        };
-                                        let weather = {
-                                            icon: apiResponse.weather.length > 0 ? apiResponse.weather[0].icon : undefined,
-                                            description: apiResponse.weather.length > 0 ? apiResponse.weather[0].description : undefined,
-                                            index: 1
-                                        };
-                                        // here will be DB insert
-                                        this.db.saveWeatherData(item.fid, point.type, sensors, weather, (error, response) => {
-                                            if (error) {
-                                                this.logger.error('Error while saving weather data for track points: ' + error);
-                                                console.log(error);
-                                            }
-                                            else {
-                                                this.logger.info('Weather data for track points were saved successfully, DB response: ' + response);
-                                                console.log(response);
-                                            }
-                                        });
+                                            console.log(apiResponse);
+                                            let sensors= {
+                                                temperature: apiResponse.main.temp,
+                                                humidity: apiResponse.main.humidity,
+                                                pressure: apiResponse.main.pressure,
+                                            };
+                                            let weather = {
+                                                icon: apiResponse.weather.length > 0 ? apiResponse.weather[0].icon : undefined,
+                                                description: apiResponse.weather.length > 0 ? apiResponse.weather[0].description : undefined,
+                                                index: 1
+                                            };
+                                            // here will be DB insert
+                                            this.db.saveWeatherData(item.fid, point.type, sensors, weather, (error, response) => {
+                                                if (error) {
+                                                    this.logger.error('Error while saving weather data for track points: ' + error);
+                                                    console.log(error);
+                                                }
+                                                else {
+                                                    this.logger.info('Weather data for track points were saved successfully, DB response: ' + response);
+                                                }
+                                            });
+                                        }
+                                        else if (apiResponse.cod === 500) {
+                                            this.logger.warn('OpenWeather API server error: ' + apiResponse.message);
+                                        }
+                                        
                                     });
                                 }
                             ).on('error', error => {
