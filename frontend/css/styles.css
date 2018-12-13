@@ -71,6 +71,10 @@ section#filter-form {
     margin-top: 40px;
 }
 
-section#filter-form .container form .form-group input {
-    max-width: 500px;
+section#filter-form button {
+    margin: 0 auto;
+}
+
+.alert {
+    display: none;
 }

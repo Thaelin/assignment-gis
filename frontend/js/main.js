@@ -61,6 +61,7 @@ $(document).ready(function() {
                                     <p><b>Temperature:</b> ${point.data.weather.temperature} °C</p>
                                     <p><b>Humidity:</b> ${point.data.weather.humidity} %</p>
                                     <p><b>Pressure:</b> ${point.data.weather.pressure} HpA</p>
+                                    <p><b>Last weather update:</b> ${point.data.measureDate}</p>
                                     `
                                 )
                         )

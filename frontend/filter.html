@@ -30,7 +30,7 @@
         </nav>
         <section id="filter-form">
             <div class="container">
-                <h1 class="text-center">Set up your dream route</h1>
+                <h1 class="text-center">Find your dream route</h1>
                     <form>
                         <div class="row">
                             <div class="col-sm-12">
@@ -41,22 +41,35 @@
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="minLengthInput">Minimal route length (km)</label>
-                                    <input type="number" class="form-control" id="minLengthInput" min="0" placeholder="Leave empty if you don't mind route's length" />
+                                    <input type="text" class="form-control" id="minLengthInput" placeholder="Leave empty if you don't mind route's length" />
                                 </div>
                             </div>
                             <div class="col-sm-6">
                                 <div class="form-group">
                                     <label for="maxLengthInput">Maximum route length (km)</label>
-                                    <input type="number" class="form-control" id="maxLengthInput" min="0" placeholder="Leave empty if you don't mind route's length" />
+                                    <input type="text" class="form-control" id="maxLengthInput" placeholder="Leave empty if you don't mind route's length" />
                                 </div>
                             </div>
                         </div>
-                        
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div id="minOverlapsMaxWarning" class="alert alert-danger" role="alert">
+                                    Minimal route length can not overlap maximum route length.
+                                </div>
+                                <div id="lengthMustBeNumber" class="alert alert-danger" role="alert">
+                                    Values must be numbers.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <button id="filterSubmit" type="button" class="btn btn-primary">Find my lovely routes</button>
+                        </div>
                     </form>
             </div>
             
         </section>
         <script src="libs/jquery/jquery-3.3.1.min.js"></script>
         <script src="libs/bootstrap/bootstrap.bundle.min.js"></script>
+        <script src="js/filter.js"></script>
     </body>
 </html>
