@@ -93,8 +93,18 @@ class Main {
                                                     return point.type === weatherData.point_type;
                                                 });
 
-                                                if (weatherData) {
-                                                    point.data.weather = weatherData.weather;
+                                                if (weatherData && weatherData.weather) {
+                                                    let strippedWeather = weatherData.weather.replace('(', '').replace(')', '').replace(/"/g, '');
+                                                    let weatherValues = strippedWeather.split(',');
+
+                                                    point.data.weather = {
+                                                        temperature: Number(weatherValues[0]),
+                                                        humidity: Number(weatherValues[1]),
+                                                        pressure: Number(weatherValues[2]),
+                                                        icon: weatherValues[3],
+                                                        description: weatherValues[4],
+                                                        index: Number(weatherValues[5])
+                                                    };
                                                     point.data.measureDate = weatherData.measure_date;
                                                 }
                                             });
@@ -130,7 +140,7 @@ class Main {
             if (config.weather.apiToken != "undefined") {
                 setInterval(this.actualizeWeather.bind(this), config.weather.actualizationTimerMs | 300000);
                 // weather initialization starts also at the point of application start
-                this.actualizeWeather();
+                //this.actualizeWeather();
             }
             else {
                 throw 'Weather actualizer can not start because Dark Sky API token was not provided in config.json';

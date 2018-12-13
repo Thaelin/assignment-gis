@@ -37,7 +37,9 @@ $(document).ready(function() {
                             new mapboxgl.Popup({ offset: 25 })
                                 .setHTML(
                                     `<h3>Start</h3><p><b>Route:</b> ${route.name}</p>
-                                    <p><b>Length:</b> ${route.length.toFixed(2)} km</p>`
+                                    <p><b>Length:</b> ${route.length.toFixed(2)} km</p>
+                                    <p><b>Temperature:</b> ${point.data.weather.temperature} °C</p>
+                                    `
                                 )
                         )
                         .addTo(map);
