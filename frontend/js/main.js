@@ -7,73 +7,12 @@ $(document).ready(function() {
         center: [ 19.696058, 48.6737532 ],
         zoom: 7.15,
         minZoom: 6.75,
-        style: 'mapbox://styles/flaytrue/cjpcl12fo22xq2snw85xbzsm3'
+        style: 'mapbox://styles/flaytrue/cjpcl12fo22xq2snw85xbzsm3?optimize=true'
     });
 
     // load cycling routes
     $.get('/api/cyclingRoutes', data => {
-        console.log(data);
         data.forEach((route) => {
-            // get actual weather points for each route
-            $.get('/api/weatherPoints/' + route.fid, data => {
-                console.log(route.fid, data);
-                data.forEach(point => {
-                    var element = document.createElement('div');
-
-                    switch(point.type) {
-                        case 'START':
-                            element.className = 'marker-start';
-                            break;
-                        case 'FINISH':
-                            element.className = 'marker-finish';
-                            break;
-                        default:
-                            element.className = 'marker-default';
-                    }
-
-                    new mapboxgl.Marker(element)
-                        .setLngLat(point.data.coordinates)
-                        .setPopup(
-                            new mapboxgl.Popup({ offset: 25 })
-                                .setHTML(
-                                    `<h3>Start</h3><p><b>Route:</b> ${route.name}</p>
-                                    <p><b>Length:</b> ${route.length.toFixed(2)} km</p>
-                                    <p><b>Temperature:</b> ${point.data.weather.temperature} °C</p>
-                                    `
-                                )
-                        )
-                        .addTo(map);
-                });
-            });
-            // add map markers
-            /*
-            var startEl = document.createElement('div');
-            var finishEl = document.createElement('div');
-            startEl.className = 'marker-start';
-            finishEl.className = 'marker-finish';
-
-            new mapboxgl.Marker(startEl)
-                .setLngLat(route.route.coordinates[0])
-                .setPopup(
-                    new mapboxgl.Popup({ offset: 25 })
-                        .setHTML(
-                            `<h3>Start</h3><p><b>Route:</b> ${route.name}</p>
-                            <p><b>Length:</b> ${route.length.toFixed(2)} km</p>`
-                        )
-                )
-                .addTo(map);
-            new mapboxgl.Marker(finishEl)
-                .setLngLat(route.route.coordinates[route.route.coordinates.length - 1])
-                .setPopup(
-                    new mapboxgl.Popup({ offset: 25 })
-                        .setHTML(
-                            `<h4>FINISH</h4><p><b>Route:</b> ${route.name}</p>
-                            <p><b>Length:</b> ${route.length.toFixed(2)} km</p>`
-                        )
-                )
-                .addTo(map);
-            */
-
             map.addLayer({
                 "id": "route_" + route.name,
                 "type": "line",
@@ -93,6 +32,42 @@ $(document).ready(function() {
                     "line-color": randomColor({ luminosity: 'dark' }),
                     "line-width": 3
                 }
+            });
+
+            // get actual weather points for each route
+            $.get('/api/weatherPoints/' + route.fid, data => {
+                data.forEach(point => {
+                    var element = document.createElement('div');
+
+                    switch(point.type) {
+                        case 'START':
+                            element.className = 'marker-start';
+                            break;
+                        case 'FINISH':
+                            element.className = 'marker-finish';
+                            break;
+                        default:
+                            element.className = 'marker-weather';
+                    }
+
+                    new mapboxgl.Marker(element)
+                        .setLngLat(point.data.coordinates)
+                        .setPopup(
+                            new mapboxgl.Popup({ offset: 25 })
+                                .setHTML(
+                                    `<h4>${point.type} milestone</h4><p><b>Route:</b> ${route.name}</p>
+                                    <p><b>Length:</b> ${route.length.toFixed(2)} km</p>
+                                    <img alt="weather-icon" src="/assets/icons/${point.data.weather.icon}.png"/>
+                                    <p><b>Temperature:</b> ${point.data.weather.temperature} °C</p>
+                                    <p><b>Humidity:</b> ${point.data.weather.humidity} %</p>
+                                    <p><b>Pressure:</b> ${point.data.weather.pressure} HpA</p>
+                                    `
+                                )
+                        )
+                        .addTo(map);
+                });
+
+                $('#loading').hide();
             });
         });
     });
