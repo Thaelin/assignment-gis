@@ -21,19 +21,42 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                    <a class="nav-item nav-link active" href="#">Cycling routes</a>
-                    <a class="nav-item nav-link" href="#">Route for you</a>
+                    <a class="nav-item nav-link" href="/index.html">Cycling routes</a>
+                    <a class="nav-item nav-link active" href="#">Route for you</a>
                     <a class="nav-item nav-link" href="#">About</a>
                     </div>
                 </div>
             </div>
         </nav>
-        <div id="map"></div>
-        <div id="loading"></div>
-        <script src="libs/mapbox/mapbox-gl.js"></script>
+        <section id="filter-form">
+            <div class="container">
+                <h1 class="text-center">Set up your dream route</h1>
+                    <form>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h3>Route length:</h3>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="minLengthInput">Minimal route length (km)</label>
+                                    <input type="number" class="form-control" id="minLengthInput" min="0" placeholder="Leave empty if you don't mind route's length" />
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <label for="maxLengthInput">Maximum route length (km)</label>
+                                    <input type="number" class="form-control" id="maxLengthInput" min="0" placeholder="Leave empty if you don't mind route's length" />
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </form>
+            </div>
+            
+        </section>
         <script src="libs/jquery/jquery-3.3.1.min.js"></script>
         <script src="libs/bootstrap/bootstrap.bundle.min.js"></script>
-        <script src="libs/randomcolor/randomColor.js"></script>
-        <script src="js/main.js"></script>
     </body>
 </html>

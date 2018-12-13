@@ -66,3 +66,11 @@ body {
 .mapboxgl-popup-content p {
     margin-bottom: 0.25rem;
 }
+
+section#filter-form {
+    margin-top: 40px;
+}
+
+section#filter-form .container form .form-group input {
+    max-width: 500px;
+}
