@@ -32,12 +32,10 @@ class Database {
     }
 
     allCyclingRoutes(callback) {
-        this.pool.query('SELECT fid, name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes', callback);
+        this.pool.query('SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes', callback);
     }
 
-    getRouteMilestones(routeId, callback) {
-        let queryCond = routeId !== undefined ? 'WHERE fid = $1' : '';
-
+    getAllRouteMilestones(callback) {
         this.pool.query(
             `
             SELECT 
@@ -49,9 +47,26 @@ class Database {
                 ST_AsGeoJSON(ST_Line_Interpolate_Point(ST_LineMerge(route), 0.75)) AS route_third_quarter,
                 ST_AsGeoJSON(ST_EndPoint(ST_LineMerge(route))) AS route_finish
             FROM cycling_routes
-            ${queryCond}
             `,
-            routeId !== undefined ? [ routeId ] : [],
+            callback
+        );
+    }
+
+    getRouteMilestonesByRouteId(routeId, callback) {
+        this.pool.query(
+            `
+            SELECT 
+                fid,
+                ST_Length(route::geography)/1000 as length,
+                ST_AsGeoJSON(ST_StartPoint(ST_LineMerge(route))) AS route_start,
+                ST_AsGeoJSON(ST_Line_Interpolate_Point(ST_LineMerge(route), 0.25)) AS route_first_quarter,
+                ST_AsGeoJSON(ST_Line_Interpolate_Point(ST_LineMerge(route), 0.5)) AS route_middle,
+                ST_AsGeoJSON(ST_Line_Interpolate_Point(ST_LineMerge(route), 0.75)) AS route_third_quarter,
+                ST_AsGeoJSON(ST_EndPoint(ST_LineMerge(route))) AS route_finish
+            FROM cycling_routes
+            WHERE fid = $1
+            `,
+            [ routeId ],
             callback
         );
     }

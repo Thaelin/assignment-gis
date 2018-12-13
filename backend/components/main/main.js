@@ -36,6 +36,7 @@ class Main {
                 res.sendFile(path.join(__dirname, '../../../frontend/index.html'));
             });
             
+            // API route for getting all cycling routes
             this.app.get('/api/cyclingRoutes', (req, res) => {
                 this.db.allCyclingRoutes((error, data) => {
                     if (error) {
@@ -48,6 +49,7 @@ class Main {
                         // parse data to JSON
                         data.rows.forEach((route) => {
                             parsedData.push({
+                                fid: route.fid,
                                 name: route.name,
                                 route: JSON.parse(route.route),
                                 length: route.length
@@ -57,6 +59,61 @@ class Main {
                         res.json(parsedData);
                     }
                 });
+            });
+
+            // API route for getting specific route's weather points
+            this.app.get('/api/weatherPoints/:routeId', (req, res) => {
+                if (isNaN(req.params.routeId)) {
+                    this.logger.warn(`Received /api/weatherPoints/:routeId with invalid parameter: ${req.params.routeid} - is not a number`);
+                    res.status(400).json({
+                        errorCode: 'PARAMETER_NAN',
+                        errorMsg: `Received /api/weatherPoints/:routeId with invalid parameter: ${req.params.routeid} - is not a number`
+                    });
+                }
+                else {
+                    this.db.getRouteMilestonesByRouteId(req.params.routeId, (error, data) => {
+                        if (error) {
+                            this.logger.error(error);
+                            throw new Error;
+                        }
+                        else {
+                            if (data.rows) {
+                                let points = this.preparePoints(data.rows[0]);
+
+                                this.db.getRouteWeather(req.params.routeId, (error, data) => {
+                                    if (error) {
+                                        this.logger.error(error);
+                                        throw new Error;
+                                    }
+                                    else {
+                                        if (data.rows) {
+                                            // here will be weather data mapped to route milestones - points
+                                            points.forEach(point => {
+                                                let weatherData = data.rows.find(weatherData => {
+                                                    return point.type === weatherData.point_type;
+                                                });
+
+                                                if (weatherData) {
+                                                    point.data.weather = weatherData.weather;
+                                                    point.data.measureDate = weatherData.measure_date;
+                                                }
+                                            });
+                                            res.json(points);
+                                        }
+                                    }
+                                    
+                                });
+                            }
+                            else {
+                                this.logger.warning(`Select for route weather points for routeId ${req.params.routeId} returned 0 rows`);
+                                res.status(500).json({
+                                    errorCode: 'NO_DATA',
+                                    errorMsg: `Select for route weather points for routeId ${req.params.routeId} returned 0 rows`
+                                });
+                            }
+                        }
+                    });
+                }
             });
 
             this.app.use(express.static(path.join(__dirname, '../../../frontend')));
@@ -72,7 +129,8 @@ class Main {
         if (this.logger && this.db) {
             if (config.weather.apiToken != "undefined") {
                 setInterval(this.actualizeWeather.bind(this), config.weather.actualizationTimerMs | 300000);
-                //this.actualizeWeather();
+                // weather initialization starts also at the point of application start
+                this.actualizeWeather();
             }
             else {
                 throw 'Weather actualizer can not start because Dark Sky API token was not provided in config.json';
@@ -86,7 +144,7 @@ class Main {
     actualizeWeather() {
         var requestUrl = 'http://api.openweathermap.org/data/2.5/weather?';
 
-        this.db.getRouteMilestones((err, res) => {
+        this.db.getAllRouteMilestones((err, res) => {
             if (err) {
                 this.logger.error('Error while selecting cycling route milestones');
                 throw 'Error while selecting cycling route milestones';
@@ -94,38 +152,7 @@ class Main {
             else {
                 if (res) {
                     res.rows.forEach((item) => {
-                        console.log(item);
-                        // these weather points are essential for all routes
-                        let points = [
-                            {
-                                type: 'START',
-                                data: JSON.parse(item.route_start)
-                            },
-                            {
-                                type: 'FINISH',
-                                data: JSON.parse(item.route_finish)
-                            }
-                        ];
-                        // routes longer than 30 km will have also a middle weather point
-                        if (item.length > 30) {
-                            points.push({
-                                type: 'MIDDLE',
-                                data: JSON.parse(item.route_middle)
-                            });
-                        }
-                        // routes longer than 100km will also have a first and third quarter weather points
-                        if (item.length > 100) {
-                            points.push(
-                                {
-                                    type: 'FIRSTQUARTER',
-                                    data: JSON.parse(item.route_first_quarter)
-                                },
-                                {
-                                    type: 'THIRDQUARTER',
-                                    data: JSON.parse(item.route_third_quarter)
-                                }
-                            );
-                        }
+                        let points = this.preparePoints(item);
 
                         points.forEach(point => {
                             http.get(
@@ -184,6 +211,42 @@ class Main {
         });
 
         
+    }
+
+    preparePoints(data) {
+        // these weather points are essential for all routes
+        let points = [
+            {
+                type: 'START',
+                data: JSON.parse(data.route_start)
+            },
+            {
+                type: 'FINISH',
+                data: JSON.parse(data.route_finish)
+            }
+        ];
+        // routes longer than 30 km will have also a middle weather point
+        if (data.length > 30) {
+            points.push({
+                type: 'MIDDLE',
+                data: JSON.parse(data.route_middle)
+            });
+        }
+        // routes longer than 100km will also have a first and third quarter weather points
+        if (data.length > 100) {
+            points.push(
+                {
+                    type: 'FIRSTQUARTER',
+                    data: JSON.parse(data.route_first_quarter)
+                },
+                {
+                    type: 'THIRDQUARTER',
+                    data: JSON.parse(data.route_third_quarter)
+                }
+            );
+        }
+
+        return points;
     }
 }
 

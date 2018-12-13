@@ -11,17 +11,47 @@ $(document).ready(function() {
     });
 
     // load cycling routes
-    $.get('/api/cyclingRoutes', function(data) {
+    $.get('/api/cyclingRoutes', data => {
         console.log(data);
         data.forEach((route) => {
+            // get actual weather points for each route
+            $.get('/api/weatherPoints/' + route.fid, data => {
+                console.log(route.fid, data);
+                data.forEach(point => {
+                    var element = document.createElement('div');
+
+                    switch(point.type) {
+                        case 'START':
+                            element.className = 'marker-start';
+                            break;
+                        case 'FINISH':
+                            element.className = 'marker-finish';
+                            break;
+                        default:
+                            element.className = 'marker-default';
+                    }
+
+                    new mapboxgl.Marker(element)
+                        .setLngLat(point.data.coordinates)
+                        .setPopup(
+                            new mapboxgl.Popup({ offset: 25 })
+                                .setHTML(
+                                    `<h3>Start</h3><p><b>Route:</b> ${route.name}</p>
+                                    <p><b>Length:</b> ${route.length.toFixed(2)} km</p>`
+                                )
+                        )
+                        .addTo(map);
+                });
+            });
             // add map markers
+            /*
             var startEl = document.createElement('div');
             var finishEl = document.createElement('div');
             startEl.className = 'marker-start';
             finishEl.className = 'marker-finish';
 
             new mapboxgl.Marker(startEl)
-                .setLngLat(route.route.coordinates[0][0])
+                .setLngLat(route.route.coordinates[0])
                 .setPopup(
                     new mapboxgl.Popup({ offset: 25 })
                         .setHTML(
@@ -31,7 +61,7 @@ $(document).ready(function() {
                 )
                 .addTo(map);
             new mapboxgl.Marker(finishEl)
-                .setLngLat(route.route.coordinates[0][route.route.coordinates[0].length - 1])
+                .setLngLat(route.route.coordinates[route.route.coordinates.length - 1])
                 .setPopup(
                     new mapboxgl.Popup({ offset: 25 })
                         .setHTML(
@@ -40,6 +70,7 @@ $(document).ready(function() {
                         )
                 )
                 .addTo(map);
+            */
 
             map.addLayer({
                 "id": "route_" + route.name,
