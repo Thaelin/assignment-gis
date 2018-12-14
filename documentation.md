@@ -8,11 +8,11 @@
 
 # Overview
 
-This application shows hotels in Bratislava on a map. Most important features are:
-- search by proximity to my current location
-- search by hotel name
-- intelligent ordering - by proximity and by hotel features
-- hotels on the map are color coded by their quality assigned in stars (standard)
+Application works with cycling routes data on the map and it's most important features are:
+- show cycling routes and their data - name and length
+- show their weather data - 1 route has more weather points based on it's length
+- filtering cycling routes by desired minimal temperature and maximal humidity
+- filtering cycling routes by their length
 
 This is it in action:
 
