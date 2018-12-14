@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    $('#loading').hide();
+
     $('#filterSubmit').click(function() {
         // Filter data to be sent
         var filterData = {};
@@ -42,7 +44,10 @@ $(document).ready(function() {
 
         if (validationErrors === 0) {
             $.post('/api/cyclingRoutes', filterData, data => {
-                
+                $('#filter-form').hide();
+                $('#loading').show();
+                $('#map').show();
+                mapInit(data);
             });
         }
         

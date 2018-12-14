@@ -1,4 +1,5 @@
 const express = require('express');
+var bodyParser = require('body-parser');
 const http = require('http');
 const Logger = require('../../components/logger/logger.js');
 const Database = require('../../components/database/database.js');
@@ -32,7 +33,13 @@ class Main {
 
     initApi() {
         if (this.logger && this.db) {
+            this.app.use( bodyParser.json() ); 
+            this.app.use(express.urlencoded({
+                extended: true
+            }));
+
             this.app.get('/', (req, res) => {
+                console.log(req.params);
                 res.sendFile(path.join(__dirname, '../../../frontend/index.html'));
             });
             
@@ -59,6 +66,43 @@ class Main {
                         res.json(parsedData);
                     }
                 });
+            });
+
+            // API route for getting filtered cycling routes
+            this.app.post('/api/cyclingRoutes', (req, res) => {
+                if (isNaN(req.body.minLength || isNaN(req.body.maxLength))) {
+                    this.logger.warn(`Received POST: /api/cyclingRoutes with invalid parameters: ${req.body.minLength}, ${req.body.maxLength}`);
+                    res.status(400).json({
+                        errorCode: 'PARAMETER_NAN',
+                        errorMsg: `Received POST: /api/cyclingRoutes with invalid parameters: ${req.body.minLength}, ${req.body.maxLength}`
+                    });
+                }
+                else {
+                    this.db.getCyclingRoutesByLength(req.body.minLength, req.body.maxLength, (error, data) => {
+                        if (error) {
+                            this.logger.error(error);
+                            throw new Error;
+                        }
+                        else {
+                            let parsedData = [];
+    
+                            // parse data to JSON
+                            data.rows.forEach((route) => {
+                                parsedData.push({
+                                    fid: route.fid,
+                                    name: route.name,
+                                    route: JSON.parse(route.route),
+                                    length: route.length
+                                });
+                            });
+                            
+                            //res.sendFile(path.join(__dirname, '../../../frontend/index.html'));
+                            res.json(parsedData);
+                        }
+                    });
+                }
+                //
+                
             });
 
             // API route for getting specific route's weather points

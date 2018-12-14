@@ -54,6 +54,10 @@ body {
     cursor: pointer;
 }
 
+.hidden {
+    display: none;
+}
+
 .mapboxgl-popup {
     max-width: 300px;
 }

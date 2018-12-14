@@ -35,6 +35,39 @@ class Database {
         this.pool.query('SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes', callback);
     }
 
+    getCyclingRoutesByLength(minLength, maxLength, callback) {
+        if (minLength && maxLength) {
+            this.pool.query(
+                `
+                SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
+                WHERE ST_Length(route::geography)/1000 BETWEEN $1 AND $2
+                `, 
+                [ minLength, maxLength ],
+                callback
+            );
+        }
+        else if (minLength) {
+            this.pool.query(
+                `
+                SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
+                WHERE ST_Length(route::geography)/1000 >= $1
+                `, 
+                [ minLength ],
+                callback
+            );
+        }
+        else if (maxLength) {
+            this.pool.query(
+                `
+                SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
+                WHERE ST_Length(route::geography)/1000 <= $1
+                `, 
+                [ maxLength ],
+                callback
+            );
+        }
+    }
+
     getAllRouteMilestones(callback) {
         this.pool.query(
             `

@@ -28,6 +28,8 @@
                 </div>
             </div>
         </nav>
+        <div id="map" class="hidden"></div>
+        <div id="loading"></div>
         <section id="filter-form">
             <div class="container">
                 <h1 class="text-center">Find your dream route</h1>
@@ -62,14 +64,16 @@
                             </div>
                         </div>
                         <div class="row text-center">
-                            <button id="filterSubmit" type="button" class="btn btn-primary">Find my lovely routes</button>
+                            <button id="filterSubmit" type="button" class="btn btn-primary">Find routes of your dreams</button>
                         </div>
                     </form>
             </div>
-            
         </section>
+        <script src="libs/mapbox/mapbox-gl.js"></script>
         <script src="libs/jquery/jquery-3.3.1.min.js"></script>
         <script src="libs/bootstrap/bootstrap.bundle.min.js"></script>
+        <script src="libs/randomcolor/randomColor.js"></script>
+        <script src="js/map.js"></script>
         <script src="js/filter.js"></script>
     </body>
 </html>
