@@ -134,28 +134,31 @@ All database communication is stored in *Database component*. It is located in (
 
 **Getting all cycling routes**
 
-```SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
+```
+SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
 FROM cycling_routes;
 ```
 *Explain*:
-
+```
 "Seq Scan on cycling_routes  (cost=0.00..591.17 rows=210 width=362)"
-
+```
 **Getting cycling routes filtered by length range**
 
-```SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
+```
+SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
 FROM cycling_routes
 WHERE ST_Length(route::geography)/1000 BETWEEN $1 AND $2
 ```
 *Explain*:
-
+```
 "Seq Scan on cycling_routes  (cost=0.00..123.01 rows=1 width=362)"
 "  Filter: (((st_length((route)::geography, true) / '1000'::double precision) >= '20'::double precision) AND ((st_length((route)::geography, true) / '1000'::double precision) <= '50'::double precision))"
-
+```
 
 **Getting cycling routes filtered by length range**
 
-```SELECT fid, name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
+```
+SELECT fid, name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
 JOIN (
     SELECT cycling_route_id, 
     AVG((weather).temperature) AS avg_temperature, 
@@ -172,7 +175,7 @@ JOIN (
 WHERE avg_temperature >= $1 AND avg_humidity <= $2
 ```
 *Explain*:
-
+```
 "Hash Join  (cost=1542.02..1598.76 rows=16 width=362)"
 "  Hash Cond: (cycling_routes.fid = temp.cycling_route_id)"
 "  ->  Seq Scan on cycling_routes  (cost=0.00..12.10 rows=210 width=354)"
@@ -189,10 +192,11 @@ WHERE avg_temperature >= $1 AND avg_humidity <= $2
 "                                      ->  Sort  (cost=1141.06..1169.50 rows=11375 width=71)"
 "                                            Sort Key: cycling_routes_weather.point_type, cycling_routes_weather.cycling_route_id, cycling_routes_weather.measure_date DESC"
 "                                            ->  Seq Scan on cycling_routes_weather  (cost=0.00..374.75 rows=11375 width=71)"
-
+```
 **Getting milestones of specific cycling route**
 
-```SELECT 
+```
+SELECT 
     fid,
     ST_Length(route::geography)/1000 as length,
     ST_AsGeoJSON(ST_StartPoint(ST_LineMerge(route))) AS route_start,
@@ -204,7 +208,7 @@ FROM cycling_routes
 WHERE fid = $1
 ```
 *Explain*:
-
+```
 "Index Scan using cycling_routes_pkey on cycling_routes  (cost=0.14..21.68 rows=1 width=172)"
 "  Index Cond: (fid = 12)"
-
+```
