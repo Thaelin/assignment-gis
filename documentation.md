@@ -133,15 +133,78 @@ All database communication is stored in *Database component*. It is located in (
 - cycling_routes_weather table contained weather data for all cycling_routes with historic data and more data point types => that's why I needed to use window function to prefilter them
 
 **Getting all cycling routes**
+
 SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
 FROM cycling_routes;
 
 *Explain*:
+
 "Seq Scan on cycling_routes  (cost=0.00..591.17 rows=210 width=362)"
 
 **Getting cycling routes filtered by length range**
+
 SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
 FROM cycling_routes
 WHERE ST_Length(route::geography)/1000 BETWEEN $1 AND $2
 
+*Explain*:
+
+"Seq Scan on cycling_routes  (cost=0.00..123.01 rows=1 width=362)"
+"  Filter: (((st_length((route)::geography, true) / '1000'::double precision) >= '20'::double precision) AND ((st_length((route)::geography, true) / '1000'::double precision) <= '50'::double precision))"
+
+
 **Getting cycling routes filtered by length range**
+
+SELECT fid, name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
+JOIN (
+    SELECT cycling_route_id, 
+    AVG((weather).temperature) AS avg_temperature, 
+    AVG((weather).humidity) AS avg_humidity FROM (
+        SELECT cycling_route_id, weather, 
+        rank() OVER (
+            PARTITION BY point_type, cycling_route_id ORDER BY measure_date DESC
+        ) 
+        FROM cycling_routes_weather
+    ) actual_weather
+    WHERE rank = 1
+    GROUP BY cycling_route_id
+) temp ON fid = cycling_route_id
+WHERE avg_temperature >= $1 AND avg_humidity <= $2
+
+*Explain*:
+
+"Hash Join  (cost=1542.02..1598.76 rows=16 width=362)"
+"  Hash Cond: (cycling_routes.fid = temp.cycling_route_id)"
+"  ->  Seq Scan on cycling_routes  (cost=0.00..12.10 rows=210 width=354)"
+"  ->  Hash  (cost=1541.82..1541.82 rows=16 width=4)"
+"        ->  Subquery Scan on temp  (cost=1540.85..1541.82 rows=16 width=4)"
+"              ->  GroupAggregate  (cost=1540.85..1541.66 rows=16 width=20)"
+"                    Group Key: actual_weather.cycling_route_id"
+"                    Filter: ((avg((actual_weather.weather).temperature) >= '-2'::double precision) AND (avg((actual_weather.weather).humidity) <= '90'::double precision))"
+"                    ->  Sort  (cost=1540.85..1540.99 rows=57 width=56)"
+"                          Sort Key: actual_weather.cycling_route_id"
+"                          ->  Subquery Scan on actual_weather  (cost=1141.06..1539.18 rows=57 width=56)"
+"                                Filter: (actual_weather.rank = 1)"
+"                                ->  WindowAgg  (cost=1141.06..1397.00 rows=11375 width=79)"
+"                                      ->  Sort  (cost=1141.06..1169.50 rows=11375 width=71)"
+"                                            Sort Key: cycling_routes_weather.point_type, cycling_routes_weather.cycling_route_id, cycling_routes_weather.measure_date DESC"
+"                                            ->  Seq Scan on cycling_routes_weather  (cost=0.00..374.75 rows=11375 width=71)"
+
+**Getting milestones of specific cycling route**
+
+SELECT 
+    fid,
+    ST_Length(route::geography)/1000 as length,
+    ST_AsGeoJSON(ST_StartPoint(ST_LineMerge(route))) AS route_start,
+    ST_AsGeoJSON(ST_Line_Interpolate_Point(ST_LineMerge(route), 0.25)) AS route_first_quarter,
+    ST_AsGeoJSON(ST_Line_Interpolate_Point(ST_LineMerge(route), 0.5)) AS route_middle,
+    ST_AsGeoJSON(ST_Line_Interpolate_Point(ST_LineMerge(route), 0.75)) AS route_third_quarter,
+    ST_AsGeoJSON(ST_EndPoint(ST_LineMerge(route))) AS route_finish
+FROM cycling_routes
+WHERE fid = $1
+
+*Explain*:
+
+"Index Scan using cycling_routes_pkey on cycling_routes  (cost=0.14..21.68 rows=1 width=172)"
+"  Index Cond: (fid = 12)"
+
