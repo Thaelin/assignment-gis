@@ -47,6 +47,17 @@ $(document).ready(function() {
                 $('#filter-form').hide();
                 $('#loading').show();
                 $('#map').show();
+                $('#filter-list').show();
+                // show individual filter list items 
+                if (filterData.minLength && filterData.maxLength) {
+                    $('#routeLengthFilter').show().append(filterData.minLength + ' km - ' + filterData.maxLength + ' km');
+                }
+                else if (filterData.minLength) {
+                    $('#routeLengthFilter').show().append('>= ' + filterData.minLength + ' km');
+                }
+                else if (filterData.maxLength) {
+                    $('#routeLengthFilter').show().append('<= ' + filterData.maxLength + ' km');
+                }
                 mapInit(data);
             });
         }
@@ -90,6 +101,14 @@ $(document).ready(function() {
                 $('#filter-form').hide();
                 $('#loading').show();
                 $('#map').show();
+                $('#filter-list').show();
+                // show individual filter list items 
+                if (filterData.minTemp) {
+                    $('#minTempFilter').show().append(filterData.minTemp + ' °C');
+                }
+                if (filterData.maxHumidity) {
+                    $('#maxHumidityFilter').show().append(filterData.maxHumidity + ' %');
+                }
                 mapInit(data);
             });
         }

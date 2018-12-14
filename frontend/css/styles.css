@@ -82,3 +82,18 @@ section#filter-form button {
 .alert {
     display: none;
 }
+
+section#filter-list {
+    background-color: lightgrey;
+    position: fixed;
+    display: none;
+    padding: 10px 20px;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li.filter {
+    display: none;
+}

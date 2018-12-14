@@ -67,7 +67,7 @@
                         <button id="filterLengthSubmit" type="button" class="btn btn-primary">Find routes of your dreams</button>
                     </div>
                 </form>
-                <h1 class="text-center">Find route matching your desired level of comfort</h1>
+                <h1 class="text-center">Find route matching your desired weather</h1>
                 <form>
                     <div class="row">
                         <div class="col-sm-12">
@@ -78,13 +78,13 @@
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="minTempInput">Minimal desired average temperature (°C)</label>
-                                <input type="text" class="form-control" id="minTempInput" placeholder="" />
+                                <input type="text" class="form-control" id="minTempInput" placeholder="For those liking comfy temperatures" />
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <label for="maxHumidityInput">Maximal desired average humidity (%)</label>
-                                <input type="text" class="form-control" id="maxHumidityInput" placeholder="" />
+                                <input type="text" class="form-control" id="maxHumidityInput" placeholder="For haters/lovers of rainy weather" />
                             </div>
                         </div>
                     </div>
@@ -100,6 +100,15 @@
                     </div>
                 </form>
             </div>
+        </section>
+        <section id="filter-list">
+            <h3>Active filters:</h3>
+            <ul>
+                <li id="minTempFilter" class="filter"><b>Min. temp </b> </li>
+                <li id="maxHumidityFilter" class="filter"><b>Max. humidity </b> </li>
+                <li id="routeLengthFilter" class="filter"><b>Route length </b> </li>
+            </ul>
+            <a href="filter.html"><button type="button" class="btn btn-default">New filter</button></a>
         </section>
         <script src="libs/mapbox/mapbox-gl.js"></script>
         <script src="libs/jquery/jquery-3.3.1.min.js"></script>
