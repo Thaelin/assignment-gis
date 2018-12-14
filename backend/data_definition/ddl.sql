@@ -27,6 +27,8 @@ CREATE TABLE cycling_routes_weather (
     CONSTRAINT cycling_routes_fkey FOREIGN KEY(cycling_route_id) REFERENCES cycling_routes (fid)
 );
 
+CREATE INDEX ON cycling_routes_weather (measure_date);
+
 CREATE OR REPLACE FUNCTION import_data() RETURNS VOID AS $$
 DECLARE 
     route tracks%ROWTYPE;

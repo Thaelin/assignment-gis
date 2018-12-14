@@ -22,7 +22,7 @@
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
                     <a class="nav-item nav-link" href="/index.html">Cycling routes</a>
-                    <a class="nav-item nav-link active" href="#">Route for you</a>
+                    <a class="nav-item nav-link active" href="/filter.html">Route for you</a>
                     <a class="nav-item nav-link" href="#">About</a>
                     </div>
                 </div>
@@ -32,41 +32,73 @@
         <div id="loading"></div>
         <section id="filter-form">
             <div class="container">
-                <h1 class="text-center">Find your dream route</h1>
-                    <form>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <h3>Route length:</h3>
+                <h1 class="text-center">Find route matching your condition</h1>
+                <form>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h3>Route length:</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="minLengthInput">Minimal route length (km)</label>
+                                <input type="text" class="form-control" id="minLengthInput" placeholder="Leave empty if you don't mind route's minimal length" />
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="minLengthInput">Minimal route length (km)</label>
-                                    <input type="text" class="form-control" id="minLengthInput" placeholder="Leave empty if you don't mind route's length" />
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label for="maxLengthInput">Maximum route length (km)</label>
-                                    <input type="text" class="form-control" id="maxLengthInput" placeholder="Leave empty if you don't mind route's length" />
-                                </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="maxLengthInput">Maximum route length (km)</label>
+                                <input type="text" class="form-control" id="maxLengthInput" placeholder="Leave empty if you don't mind route's maximal length" />
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div id="minOverlapsMaxWarning" class="alert alert-danger" role="alert">
-                                    Minimal route length can not overlap maximum route length.
-                                </div>
-                                <div id="lengthMustBeNumber" class="alert alert-danger" role="alert">
-                                    Values must be numbers.
-                                </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="minOverlapsMaxWarning" class="alert alert-danger" role="alert">
+                                Minimal route length can not overlap maximum route length.
+                            </div>
+                            <div id="lengthMustBeNumber" class="alert alert-danger" role="alert">
+                                Values must be numbers.
                             </div>
                         </div>
-                        <div class="row text-center">
-                            <button id="filterSubmit" type="button" class="btn btn-primary">Find routes of your dreams</button>
+                    </div>
+                    <div class="row text-center">
+                        <button id="filterLengthSubmit" type="button" class="btn btn-primary">Find routes of your dreams</button>
+                    </div>
+                </form>
+                <h1 class="text-center">Find route matching your desired level of comfort</h1>
+                <form>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h3>Route weather stats:</h3>
                         </div>
-                    </form>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="minTempInput">Minimal desired average temperature (°C)</label>
+                                <input type="text" class="form-control" id="minTempInput" placeholder="" />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="maxHumidityInput">Maximal desired average humidity (%)</label>
+                                <input type="text" class="form-control" id="maxHumidityInput" placeholder="" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="mustBeNumber" class="alert alert-danger" role="alert">
+                                Values must be numbers.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row text-center">
+                        <button id="filterWeatherSubmit" type="button" class="btn btn-primary">Find routes of your dreams</button>
+                    </div>
+                </form>
             </div>
         </section>
         <script src="libs/mapbox/mapbox-gl.js"></script>

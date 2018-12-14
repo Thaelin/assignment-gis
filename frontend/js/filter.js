@@ -1,7 +1,7 @@
 $(document).ready(function() {
     $('#loading').hide();
 
-    $('#filterSubmit').click(function() {
+    $('#filterLengthSubmit').click(function() {
         // Filter data to be sent
         var filterData = {};
         var validationErrors = 0;
@@ -41,6 +41,49 @@ $(document).ready(function() {
         }
         filterData.minLength = minLength;
         filterData.maxLength = maxLength;
+
+        if (validationErrors === 0) {
+            $.post('/api/cyclingRoutes', filterData, data => {
+                $('#filter-form').hide();
+                $('#loading').show();
+                $('#map').show();
+                mapInit(data);
+            });
+        }
+        
+    });
+
+    $('#filterWeatherSubmit').click(function() {
+        // Filter data to be sent
+        var filterData = {};
+        var validationErrors = 0;
+        // Raw input values
+        var minTempInput = $('#minTempInput').val();
+        var maxHumidityInput = $('#maxHumidityInput').val();
+
+        // Weather input validations
+        if (minTempInput) {
+            if (isNaN(minTempInput)) {
+                validationErrors++;
+                $('#mustBeNumber').show();
+            }
+            else {
+                $('#mustBeNumber').hide();
+                var minTemp = Number(minTempInput);
+            }
+        }
+        if (maxHumidityInput) {
+            if (isNaN(maxHumidityInput)) {
+                validationErrors++;
+                $('#mustBeNumber').show();
+            }
+            else {
+                $('#mustBeNumber').hide();
+                var maxHumidity = Number(maxHumidityInput);
+            }
+        }
+        filterData.minTemp = minTemp;
+        filterData.maxHumidity = maxHumidity;
 
         if (validationErrors === 0) {
             $.post('/api/cyclingRoutes', filterData, data => {
