@@ -134,19 +134,19 @@ All database communication is stored in *Database component*. It is located in (
 
 **Getting all cycling routes**
 
-SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
+```SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
 FROM cycling_routes;
-
+```
 *Explain*:
 
 "Seq Scan on cycling_routes  (cost=0.00..591.17 rows=210 width=362)"
 
 **Getting cycling routes filtered by length range**
 
-SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
+```SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
 FROM cycling_routes
 WHERE ST_Length(route::geography)/1000 BETWEEN $1 AND $2
-
+```
 *Explain*:
 
 "Seq Scan on cycling_routes  (cost=0.00..123.01 rows=1 width=362)"
@@ -155,7 +155,7 @@ WHERE ST_Length(route::geography)/1000 BETWEEN $1 AND $2
 
 **Getting cycling routes filtered by length range**
 
-SELECT fid, name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
+```SELECT fid, name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
 JOIN (
     SELECT cycling_route_id, 
     AVG((weather).temperature) AS avg_temperature, 
@@ -170,7 +170,7 @@ JOIN (
     GROUP BY cycling_route_id
 ) temp ON fid = cycling_route_id
 WHERE avg_temperature >= $1 AND avg_humidity <= $2
-
+```
 *Explain*:
 
 "Hash Join  (cost=1542.02..1598.76 rows=16 width=362)"
@@ -192,7 +192,7 @@ WHERE avg_temperature >= $1 AND avg_humidity <= $2
 
 **Getting milestones of specific cycling route**
 
-SELECT 
+```SELECT 
     fid,
     ST_Length(route::geography)/1000 as length,
     ST_AsGeoJSON(ST_StartPoint(ST_LineMerge(route))) AS route_start,
@@ -202,7 +202,7 @@ SELECT
     ST_AsGeoJSON(ST_EndPoint(ST_LineMerge(route))) AS route_finish
 FROM cycling_routes
 WHERE fid = $1
-
+```
 *Explain*:
 
 "Index Scan using cycling_routes_pkey on cycling_routes  (cost=0.14..21.68 rows=1 width=172)"
