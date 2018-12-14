@@ -43,7 +43,7 @@ $(document).ready(function() {
         filterData.maxLength = maxLength;
 
         if (validationErrors === 0) {
-            $.post('/api/cyclingRoutes', filterData, data => {
+            $.post('/api/cyclingRoutes/condition', filterData, data => {
                 $('#filter-form').hide();
                 $('#loading').show();
                 $('#map').show();
@@ -86,7 +86,7 @@ $(document).ready(function() {
         filterData.maxHumidity = maxHumidity;
 
         if (validationErrors === 0) {
-            $.post('/api/cyclingRoutes', filterData, data => {
+            $.post('/api/cyclingRoutes/comfort', filterData, data => {
                 $('#filter-form').hide();
                 $('#loading').show();
                 $('#map').show();

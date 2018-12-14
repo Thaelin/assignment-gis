@@ -68,6 +68,78 @@ class Database {
         }
     }
 
+    getCyclingRoutesByWeather(minTemp, maxHumidity, callback) {
+        if (minTemp && maxHumidity) {
+            this.pool.query(
+                `
+                SELECT fid, name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
+                JOIN (
+                    SELECT cycling_route_id, 
+                    AVG((weather).temperature) AS avg_temperature, 
+                    AVG((weather).humidity) AS avg_humidity FROM (
+                        SELECT cycling_route_id, weather, 
+                        rank() OVER (
+                            PARTITION BY point_type, cycling_route_id ORDER BY measure_date DESC
+                        ) 
+                        FROM cycling_routes_weather
+                    ) actual_weather
+                    WHERE rank = 1
+                    GROUP BY cycling_route_id
+                ) temp ON fid = cycling_route_id
+                WHERE avg_temperature >= $1 AND avg_humidity <= $2
+                `, 
+                [ minTemp, maxHumidity ],
+                callback
+            );
+        }
+        else if (minTemp) {
+            this.pool.query(
+                `
+                SELECT fid, name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
+                JOIN (
+                    SELECT cycling_route_id, 
+                    AVG((weather).temperature) AS avg_temperature, 
+                    AVG((weather).humidity) AS avg_humidity FROM (
+                        SELECT cycling_route_id, weather, 
+                        rank() OVER (
+                            PARTITION BY point_type, cycling_route_id ORDER BY measure_date DESC
+                        ) 
+                        FROM cycling_routes_weather
+                    ) actual_weather
+                    WHERE rank = 1
+                    GROUP BY cycling_route_id
+                ) temp ON fid = cycling_route_id
+                WHERE avg_temperature >= $1
+                `, 
+                [ minTemp ],
+                callback
+            );
+        }
+        else if (maxHumidity) {
+            this.pool.query(
+                `
+                SELECT fid, name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
+                JOIN (
+                    SELECT cycling_route_id, 
+                    AVG((weather).temperature) AS avg_temperature, 
+                    AVG((weather).humidity) AS avg_humidity FROM (
+                        SELECT cycling_route_id, weather, 
+                        rank() OVER (
+                            PARTITION BY point_type, cycling_route_id ORDER BY measure_date DESC
+                        ) 
+                        FROM cycling_routes_weather
+                    ) actual_weather
+                    WHERE rank = 1
+                    GROUP BY cycling_route_id
+                ) temp ON fid = cycling_route_id
+                WHERE avg_humidity <= $1
+                `, 
+                [ maxHumidity ],
+                callback
+            );
+        }
+    }
+
     getAllRouteMilestones(callback) {
         this.pool.query(
             `
