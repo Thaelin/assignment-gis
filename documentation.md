@@ -53,24 +53,5 @@ Weather data is obtained from *OpenWeatherMap API*. Count of weather query point
 *API* is documented interactively through Swagger. When application runs, its interactive docs are accessible via URL: (`localhost:3000/api-docs`). There you can check all parameters needed and response value formats. You can also execute API calls from there as well. 
 ![Screenshot 4](doc-images/swagger.png)
 
-**Find hotels in proximity to coordinates**
-
-`GET /search?lat=25346&long=46346123`
-
-**Find hotels by name, sorted by proximity and quality**
-
-`GET /search?name=hviezda&lat=25346&long=46346123`
-
-### Response
-
-API calls return json responses with 2 top-level keys, `hotels` and `geojson`. `hotels` contains an array of hotel data for the sidebar, one entry per matched hotel. Hotel attributes are (mostly self-evident):
-```
-{
-  "name": "Modra hviezda",
-  "style": "modern", # cuisine style
-  "stars": 3,
-  "address": "Panska 31"
-  "image_url": "/assets/hotels/652.png"
-}
-```
-`geojson` contains a geojson with locations of all matched hotels and style definitions.
+## Communication with database
+All database communication is stored in *Database component*. It is located in (`Backend/components/database/database.js`).
