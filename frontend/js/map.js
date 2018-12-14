@@ -75,7 +75,7 @@ function loadMapData(data) {
                     .setPopup(
                         new mapboxgl.Popup({ offset: 25 })
                             .setHTML(
-                                `<h4>${point.type} milestone</h4><p><b>Route:</b> ${route.name}</p>
+                                `<h4>${point.type.toLowerCase().replace(/^./, str => str.toUpperCase())} milestone</h4><p><b>Route:</b> ${route.name}</p>
                                 <p><b>Length:</b> ${route.length.toFixed(2)} km</p>
                                 <img alt="weather-icon" src="/assets/icons/${point.data.weather.icon}.png"/>
                                 <p><b>Description:</b> ${point.data.weather.description}</p>
