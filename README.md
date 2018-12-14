@@ -14,7 +14,7 @@ Hubert's cycling app
 Application will show cycling routes with correspondent weather data. It will help it's users decide which cycling routes to choose based on weather conditions. Application will support filtering cycling routes by route length or weather conditions.
 
 **Data source**: 
-Cycling routes will be downloaded from cykloportal.sk. Weather data will be downloaded through OpenWeatherMap API (there is one limitation - max. 60 API requests per minute - should be fine).
+Cycling routes will be downloaded from [Cykloportal.sk](http://http://www.cykloportal.sk/). Weather data will be downloaded through OpenWeatherMap API (there is one limitation - max. 60 API requests per minute - should be fine).
 
 **Technologies used**: 
 - Node.js for business logic and communication with DB
