@@ -32,7 +32,14 @@ The frontend application consists of two HTML pages: (`index.html`) and (`filter
 
 # Backend
 
-The backend application is written in Ruby on Rails and is responsible for querying geo data, formatting the geojson and data for the sidebar panel.
+The backend application powered by Node.js and is responsible for:
+- importing cycling routes data into POSTGIS database from gpx format
+- continually gathering weather data relevant to saved routes data
+- serving static files
+- serving API
+- communication with Postgres database
+- serving API documentation
+- logging application events into log files
 
 ## Data
 
