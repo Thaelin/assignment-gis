@@ -1,11 +1,3 @@
-*This is a documentation for a fictional project, just to show you what I expect. Notice a few key properties:*
-- *no cover page, really*
-- *no copy&pasted assignment text*
-- *no code samples*
-- *concise, to the point, gets me a quick overview of what was done and how*
-- *I don't really care about the document length*
-- *I used links where appropriate*
-
 # Overview
 
 Application works with cycling routes data on the map and it's most important features are:
@@ -16,7 +8,7 @@ Application works with cycling routes data on the map and it's most important fe
 
 This is it in action:
 
-![Screenshot](screenshot.png)
+![Screenshot 1](doc-images/action1.png)
 
 The application has 2 separate parts, the client which is a [frontend web application](#frontend) using mapbox API and mapbox.js and the [backend application](#backend) written in [Rails](http://rubyonrails.org/), backed by PostGIS. The frontend application communicates with backend using a [REST API](#api).
 
