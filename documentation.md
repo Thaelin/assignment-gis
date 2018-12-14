@@ -57,10 +57,10 @@ Weather data is obtained from *OpenWeatherMap API*. Count of weather query point
 ![Screenshot 4](doc-images/swagger.png)
 
 ### Api methods
-GET: /cyclingRoutes
-Description: get all cycling routes
-Parameters: none
-Response format:
+**GET: /cyclingRoutes**
+**Description:** get all cycling routes
+**Parameters:** none
+**Response format:**
 [
   {
     "fid": 0,
@@ -75,12 +75,12 @@ Response format:
   }
 ]
 
-POST: cyclingRoutes/length
-Description: get cycling routes filtered by route length in km
-Parameters: 
+**POST: cyclingRoutes/length**
+**Description:** get cycling routes filtered by route length in km
+**Parameters:** 
   - minLength
   - maxLength
-Response format:
+**Response format:**
 [
   {
     "fid": 0,
@@ -95,12 +95,12 @@ Response format:
   }
 ]
 
-POST: cyclingRoutes/weather
-Description: get cycling routes filtered by temperature and humidity
-Parameters: 
+**POST: cyclingRoutes/weather**
+**Description:** get cycling routes filtered by temperature and humidity
+**Parameters:**
   - minTemp
   - maxHumidity
-Response format:
+**Response format:**
 [
   {
     "fid": 0,
