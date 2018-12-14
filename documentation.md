@@ -5,6 +5,7 @@ Application works with cycling routes data on the map and it's most important fe
 - show their weather data - 1 route has more weather points based on it's length
 - filtering cycling routes by desired minimal temperature and maximal humidity
 - filtering cycling routes by their length
+- show temperature heatmap of Slovak republic
 
 This is it in action:
 
@@ -13,6 +14,8 @@ This is it in action:
 ![Screenshot 2](doc-images/action2.png)
 
 ![Screenshot 3](doc-images/action3.png)
+
+![Screenshot 4](doc-images/action4.png)
 
 The application has 2 separate parts, the client which is a [frontend web application](#frontend) using mapbox API and mapbox.js and the [backend application](#backend) written in [Node.js](https://nodejs.org/en/), backed by PostGIS. The frontend application communicates with backend using an [API](#api). API is documented in interactive form with Swagger tool.
 
@@ -52,6 +55,65 @@ Weather data is obtained from *OpenWeatherMap API*. Count of weather query point
 ## Api
 *API* is documented interactively through Swagger. When application runs, its interactive docs are accessible via URL: (`localhost:3000/api-docs`). There you can check all parameters needed and response value formats. You can also execute API calls from there as well. 
 ![Screenshot 4](doc-images/swagger.png)
+
+### Api methods
+GET: /cyclingRoutes
+Description: get all cycling routes
+Parameters: none
+Response format:
+[
+  {
+    "fid": 0,
+    "name": "string",
+    "route": [
+      {
+        "lat": 0,
+        "lon": 0
+      }
+    ],
+    "length": 0
+  }
+]
+
+POST: cyclingRoutes/length
+Description: get cycling routes filtered by route length in km
+Parameters: 
+  - minLength
+  - maxLength
+Response format:
+[
+  {
+    "fid": 0,
+    "name": "string",
+    "route": [
+      {
+        "lat": 0,
+        "lon": 0
+      }
+    ],
+    "length": 0
+  }
+]
+
+POST: cyclingRoutes/weather
+Description: get cycling routes filtered by temperature and humidity
+Parameters: 
+  - minTemp
+  - maxHumidity
+Response format:
+[
+  {
+    "fid": 0,
+    "name": "string",
+    "route": [
+      {
+        "lat": 0,
+        "lon": 0
+      }
+    ],
+    "length": 0
+  }
+]
 
 ## Communication with database
 All database communication is stored in *Database component*. It is located in (`Backend/components/database/database.js`).
