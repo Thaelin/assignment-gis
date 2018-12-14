@@ -1,5 +1,17 @@
 var map;
 
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [day, month, year].join('.') + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+}
+
 function mapInit(data) {
     // Initialize map
     mapboxgl.accessToken = 'pk.eyJ1IjoiZmxheXRydWUiLCJhIjoiY2pud3V2b2k0MDFybDNxcWw0cm13dmwwZiJ9.96Hi1GHh8GNtHaiMoRkq0w';
@@ -70,7 +82,7 @@ function loadMapData(data) {
                                 <p><b>Temperature:</b> ${point.data.weather.temperature} °C</p>
                                 <p><b>Humidity:</b> ${point.data.weather.humidity} %</p>
                                 <p><b>Pressure:</b> ${point.data.weather.pressure} HpA</p>
-                                <p><b>Last weather update:</b> ${point.data.measureDate}</p>
+                                <p><b>Last weather update:</b> ${formatDate(point.data.measureDate)}</p>
                                 `
                             )
                     )
