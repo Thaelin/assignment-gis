@@ -1,21 +1,22 @@
 # Overview
 
 Application works with cycling routes data on the map and it's most important features are:
-- show cycling routes and their data - name and length
-- show their weather data - 1 route has more weather points based on it's length
-- filtering cycling routes by desired minimal temperature and maximal humidity
-- filtering cycling routes by their length
-- show temperature heatmap of Slovak republic
+
+* show cycling routes and their data - name and length
+* show their weather data - 1 route has more weather points based on it's length
+* filtering cycling routes by desired minimal temperature and maximal humidity
+* filtering cycling routes by their length
+* show temperature heatmap of Slovak republic
 
 This is it in action:
 
-![Screenshot 1](doc-images/action1.png)
+![Screenshot 1](http://i63.tinypic.com/106kped.png)
 
-![Screenshot 2](doc-images/action2.png)
+![Screenshot 2](http://i64.tinypic.com/33oslqr.png)
 
-![Screenshot 3](doc-images/action3.png)
+![Screenshot 3](http://i64.tinypic.com/124jz86.png)
 
-![Screenshot 4](doc-images/action4.png)
+![Screenshot 4](http://i67.tinypic.com/351zdj8.png)
 
 The application has 2 separate parts, the client which is a [frontend web application](#frontend) using mapbox API and mapbox.js and the [backend application](#backend) written in [Node.js](https://nodejs.org/en/), backed by PostGIS. The frontend application communicates with backend using an [API](#api). API is documented in interactive form with Swagger tool.
 
@@ -36,13 +37,14 @@ The frontend application consists of two HTML pages: (`index.html`) and (`filter
 # Backend
 
 The backend application powered by Node.js and is responsible for:
-- importing cycling routes data into POSTGIS database from gpx format
-- continually gathering weather data relevant to saved routes data
-- serving static files
-- serving API
-- communication with Postgres database
-- serving API documentation
-- logging application events into log files
+
+* importing cycling routes data into POSTGIS database from gpx format
+* continually gathering weather data relevant to saved routes data
+* serving static files
+* serving API
+* communication with Postgres database
+* serving API documentation
+* logging application events into log files
 
 ## Data
 ### Cycling routes data
@@ -54,7 +56,7 @@ Weather data is obtained from *OpenWeatherMap API*. Count of weather query point
 
 ## Api
 *API* is documented interactively through Swagger. When application runs, its interactive docs are accessible via URL: (`localhost:3000/api-docs`). There you can check all parameters needed and response value formats. You can also execute API calls from there as well. 
-![Screenshot 4](doc-images/swagger.png)
+![Screenshot 4](http://i65.tinypic.com/2zf5rep.png)
 
 ### Api methods
 **GET: /cyclingRoutes**
@@ -83,8 +85,9 @@ Weather data is obtained from *OpenWeatherMap API*. Count of weather query point
 **Description:** get cycling routes filtered by route length in km
 
 **Parameters:** 
-  - minLength
-  - maxLength
+
+  * minLength
+  * maxLength
  
 **Response format:**
 [
@@ -106,8 +109,9 @@ Weather data is obtained from *OpenWeatherMap API*. Count of weather query point
 **Description:** get cycling routes filtered by temperature and humidity
 
 **Parameters:**
-  - minTemp
-  - maxHumidity
+
+  * minTemp
+  * maxHumidity
 
 **Response format:**
 [
