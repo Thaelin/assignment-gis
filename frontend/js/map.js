@@ -66,6 +66,7 @@ function loadMapData(data) {
                                 `<h4>${point.type} milestone</h4><p><b>Route:</b> ${route.name}</p>
                                 <p><b>Length:</b> ${route.length.toFixed(2)} km</p>
                                 <img alt="weather-icon" src="/assets/icons/${point.data.weather.icon}.png"/>
+                                <p><b>Description:</b> ${point.data.weather.description}</p>
                                 <p><b>Temperature:</b> ${point.data.weather.temperature} °C</p>
                                 <p><b>Humidity:</b> ${point.data.weather.humidity} %</p>
                                 <p><b>Pressure:</b> ${point.data.weather.pressure} HpA</p>
