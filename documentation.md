@@ -58,8 +58,11 @@ Weather data is obtained from *OpenWeatherMap API*. Count of weather query point
 
 ### Api methods
 **GET: /cyclingRoutes**
+
 **Description:** get all cycling routes
+
 **Parameters:** none
+
 **Response format:**
 [
   {
@@ -76,10 +79,13 @@ Weather data is obtained from *OpenWeatherMap API*. Count of weather query point
 ]
 
 **POST: cyclingRoutes/length**
+
 **Description:** get cycling routes filtered by route length in km
+
 **Parameters:** 
   - minLength
   - maxLength
+ 
 **Response format:**
 [
   {
@@ -96,10 +102,13 @@ Weather data is obtained from *OpenWeatherMap API*. Count of weather query point
 ]
 
 **POST: cyclingRoutes/weather**
+
 **Description:** get cycling routes filtered by temperature and humidity
+
 **Parameters:**
   - minTemp
   - maxHumidity
+
 **Response format:**
 [
   {
