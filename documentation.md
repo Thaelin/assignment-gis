@@ -126,3 +126,22 @@ Weather data is obtained from *OpenWeatherMap API*. Count of weather query point
 
 ## Communication with database
 All database communication is stored in *Database component*. It is located in (`Backend/components/database/database.js`).
+
+### Queries
+**Notes**: 
+- Ogr2ogr tool caused my lines to be of type MultiLineString => I needed to use ST_LineMerge everytime I wanted to use simple LineString methods.
+- cycling_routes_weather table contained weather data for all cycling_routes with historic data and more data point types => that's why I needed to use window function to prefilter them
+
+**Getting all cycling routes**
+SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
+FROM cycling_routes;
+
+*Explain*:
+"Seq Scan on cycling_routes  (cost=0.00..591.17 rows=210 width=362)"
+
+**Getting cycling routes filtered by length range**
+SELECT fid, name, ST_AsGeoJSON(ST_LineMerge(route)) AS route, ST_Length(route::geography)/1000 as length 
+FROM cycling_routes
+WHERE ST_Length(route::geography)/1000 BETWEEN $1 AND $2
+
+**Getting cycling routes filtered by length range**
