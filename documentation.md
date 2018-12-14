@@ -155,7 +155,7 @@ WHERE ST_Length(route::geography)/1000 BETWEEN $1 AND $2
 "  Filter: (((st_length((route)::geography, true) / '1000'::double precision) >= '20'::double precision) AND ((st_length((route)::geography, true) / '1000'::double precision) <= '50'::double precision))"
 ```
 
-**Getting cycling routes filtered by length range**
+**Getting cycling routes filtered by actual weather data (average route's temperature and humidity)**
 
 ```
 SELECT fid, name, ST_AsGeoJSON(route) AS route, ST_Length(route::geography)/1000 as length FROM cycling_routes
