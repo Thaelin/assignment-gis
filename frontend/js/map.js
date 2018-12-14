@@ -20,7 +20,6 @@ function mapInit(data) {
         container: 'map',
         center: [ 19.696058, 48.6737532 ],
         zoom: 7.15,
-        minZoom: 6.75,
         style: 'mapbox://styles/flaytrue/cjpcl12fo22xq2snw85xbzsm3?optimize=true'
     });
 
@@ -29,10 +28,83 @@ function mapInit(data) {
             loadMapData(data);
         });
     }
+    else {
+        loadHeatmapData();
+    }
+}
+
+function loadHeatmapData() {
+    $.get('/api/gridpoints', data => {
+        console.log('gridPoints', data);
+
+        data.features.forEach(item => {
+            item.properties.temperature /= 59;
+        });
+
+        map.addSource(`heatmap-source`, {
+            "type": "geojson",
+            "data": data
+        });
+
+        map.addLayer({
+            "id": `heatmap`,
+            "type": "heatmap",
+            "source": `heatmap-source`,
+            "maxzoom": 9,
+            "paint": {
+                // Increase the heatmap weight based on frequency and property magnitude
+                
+                "heatmap-weight": [
+                    "interpolate",
+                    ["linear"],
+                    ["get","temperature"],
+                    0, 0,
+                    1, 1.5
+                ],
+                
+                // Increase the heatmap color weight weight by zoom level
+                // heatmap-intensity is a multiplier on top of heatmap-weight
+                /*
+                "heatmap-intensity": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    0, 0,
+                    9, 0.8
+                ],
+                */
+                
+                // Color ramp for heatmap.  Domain is 0 (low) to 1 (high).
+                // Begin color ramp at 0-stop with a 0-transparancy color
+                // to create a blur-like effect.
+                "heatmap-color": [
+                    "interpolate",
+                    ["linear"],
+                    ["heatmap-density"],
+                    0, "rgba(33,102,172,0)",
+                    0.2, "rgb(103,169,207)",
+                    0.4, "rgb(209,229,240)",
+                    0.6, "rgb(253,219,199)",
+                    0.8, "rgb(239,138,98)",
+                    1, "rgb(178,24,43)"
+                ],
+                "heatmap-radius": [
+                    "interpolate",
+                    ["linear"],
+                    ["zoom"],
+                    0, 30,
+                    1, 30
+                ],
+            }
+        }, 'waterway-label');
+        $('#loading').hide();
+    });
 }
 
 function loadMapData(data) {
+
     data.forEach((route) => {
+        
         map.addLayer({
             "id": "route_" + route.name,
             "type": "line",
@@ -53,9 +125,12 @@ function loadMapData(data) {
                 "line-width": 3
             }
         });
+        
 
         // get actual weather points for each route
+        
         $.get('/api/weatherPoints/' + route.fid, data => {
+            
             data.forEach(point => {
                 var element = document.createElement('div');
 
@@ -88,10 +163,12 @@ function loadMapData(data) {
                     )
                     .addTo(map);
             });
+            
 
             $('#loading').hide();
         });
     });
+    
 
     if (data.length === 0 ) {
         $('#loading').hide();

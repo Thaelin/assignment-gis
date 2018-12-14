@@ -201,6 +201,11 @@ class Main {
                 }
             });
 
+            this.app.get('/api/gridpoints', (req, res) => {
+                //this.actualizeWeather();
+                res.json(this.sendData);
+            });
+
             this.app.use(express.static(path.join(__dirname, '../../../frontend')));
 
             this.app.listen(config.webserver.port);
@@ -216,6 +221,7 @@ class Main {
                 setInterval(this.actualizeWeather.bind(this), config.weather.actualizationTimerMs | 300000);
                 // weather initialization starts also at the point of application start
                 //this.actualizeWeather();
+                this.initGrid();
             }
             else {
                 throw 'Weather actualizer can not start because Dark Sky API token was not provided in config.json';
@@ -226,9 +232,95 @@ class Main {
         }
     }
 
+    initGrid() {
+        let gridSize = 40;
+        let topBoundary = 49.6;
+        let bottomBoundary = 47.7;
+        let leftBoundary = 16.825186;
+        let rightBoundary = 23;
+        let widthDiff = rightBoundary - leftBoundary;
+        let heightDiff = topBoundary - bottomBoundary;
+
+        this.gridPoints = [];
+
+        
+        this.db.pool.query('DELETE FROM weather_data', (err, data) => {
+            if (err)
+                console.log(err);
+            else{
+                var query = 'INSERT INTO weather_data (point, temperature) VALUES ';
+                for (let i = 0; i < gridSize ; i++) {
+                    for (let j = 0; j < gridSize * 2; j++) {
+                        let max = 25 + gridSize - i ;
+                        let min = 0 + gridSize - i ;
+                        /*
+                        let gridPoint = {
+                            data: {
+                                type: "Point",
+                                coordinates: [leftBoundary + j * widthDiff/gridSize, bottomBoundary + i * heightDiff/gridSize]
+                            },
+                            properties: {
+                                temperature: Math.random() * (max - min) + min
+                            }
+                        };
+                        this.gridPoints.push(gridPoint);
+                        */
+                        query += `(ST_SetSRID(ST_MakePoint(${leftBoundary + j  * widthDiff/gridSize /2}, ${bottomBoundary + i * heightDiff/gridSize}), 4326), ${Math.random() * (max - min) + min}), `;
+                        //query += `(ST_SetSRID(ST_MakePoint(${leftBoundary + j * widthDiff/gridSize}, ${bottomBoundary + i * heightDiff/gridSize}), 4326), ${Math.random() * (max - min) + min}), `;
+
+                        /*this.db.pool.query('INSERT INTO weather_data (point, temperature) VALUES (ST_SetSRID(ST_MakePoint($1, $2), 4326), $3)', [leftBoundary + j * widthDiff/gridSize*1.5, bottomBoundary + i * heightDiff/gridSize, Math.random() * (max - min) + min], (err, res) => {
+                            if (err)
+                                console.log(err);
+                            else {
+                                
+                            }
+                        });*/
+                    }
+                }
+
+                query = query.replace(/,([^,]*)$/,'$1');
+                this.db.pool.query(query, (err, res) => {
+                    if (err)
+                        console.log(err);
+                    else {
+                        this.db.pool.query('SELECT temperature, ST_AsGeoJSON(point) as point FROM weather_data', (err, res) => {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                let sendData = {
+                                    "type":"FeatureCollection",
+                                    "features":[]
+                                };
+                
+                                res.rows.forEach(feature => {
+                                    console.log(feature);
+                                    sendData.features.push({
+                                        "name": "HeatmapData",
+                                        "type": "Feature",
+                                        "geometry": JSON.parse(feature.point),
+                                        "properties": {
+                                            "temperature": feature.temperature
+                                        }
+                                    });
+                                });
+                                console.log(sendData);
+                                this.sendData = sendData;
+                            }
+                        });
+                    }
+                });
+                
+                
+                
+            }
+            
+        });
+    }
+
     actualizeWeather() {
         var requestUrl = 'http://api.openweathermap.org/data/2.5/weather?';
-
+        
         this.db.getAllRouteMilestones((err, res) => {
             if (err) {
                 this.logger.error('Error while selecting cycling route milestones');
@@ -294,8 +386,60 @@ class Main {
                 }
             }
         });
-
         
+        
+    }
+
+    collectData(startI, gridSize) {
+        var requestUrl = 'http://api.openweathermap.org/data/2.5/weather?';
+
+        for (let i = startI; i < startI + 3; i++) {
+            for (let j = 0; j < gridSize; j++) {
+                http.get(
+                    `${requestUrl}lat=${this.gridPoints[i*gridSize + j].data.coordinates[1]}&lon=${this.gridPoints[i*gridSize + j].data.coordinates[0]}&APPID=${config.weather.apiToken}&units=metric`
+                    ,
+                    response => {
+                        let data = '';
+                
+                        // a chunk of data has been received
+                        response.on('data', (chunk) => {
+                            data += chunk;
+                        });
+            
+                        // the whole response has been received
+                        response.on('end', () => {
+                            let apiResponse = JSON.parse(data);
+                            if (apiResponse.cod === 200) {
+                                this.logger.info('Received weather data from OpenWeatherMap API: ' + apiResponse);
+
+                                console.log(apiResponse);
+                                let sensors= {
+                                    temperature: apiResponse.main.temp,
+                                    humidity: apiResponse.main.humidity,
+                                    pressure: apiResponse.main.pressure,
+                                };
+
+                                this.gridPoints[i*gridSize + j].properties.temperature = sensors.temperature;
+                                
+                                this.db.pool.query('INSERT INTO weather_data(point, temperature) VAULES(($1, $2), $3)', [this.gridPoints[i*gridSize + j].data.coordinates[0], this.gridPoints[i*gridSize + j].data.coordinates[1], this.gridPoints[i*gridSize + j].properties.temperature], (err, data) => {
+                                    if (err)
+                                        console.log(err);
+                                    else {
+                                        setTimeout(this.collectData(startI+3, gridSize).bind(this), 60000);
+                                    }
+                                });
+                            }
+                            else if (apiResponse.cod === 500) {
+                                this.logger.warn('OpenWeather API server error: ' + apiResponse.message);
+                            }
+                            
+                        });
+                    }
+                ).on('error', error => {
+                    this.logger.error('Error occured while getting actual weather data: ' + error);
+                });
+            }
+        }
     }
 
     preparePoints(data) {
