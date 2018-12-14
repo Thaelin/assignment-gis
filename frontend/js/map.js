@@ -79,4 +79,8 @@ function loadMapData(data) {
             $('#loading').hide();
         });
     });
+
+    if (data.length === 0 ) {
+        $('#loading').hide();
+    }
 }
