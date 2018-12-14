@@ -69,12 +69,12 @@ class Main {
             });
 
             // API route for getting filtered cycling routes based on condition parameters
-            this.app.post('/api/cyclingRoutes/condition', (req, res) => {
+            this.app.post('/api/cyclingRoutes/length', (req, res) => {
                 if (isNaN(req.body.minLength || isNaN(req.body.maxLength))) {
-                    this.logger.warn(`Received POST: /api/cyclingRoutes/condition with invalid parameters: ${req.body.minLength}, ${req.body.maxLength}`);
+                    this.logger.warn(`Received POST: /api/cyclingRoutes/length with invalid parameters: ${req.body.minLength}, ${req.body.maxLength}`);
                     res.status(400).json({
                         errorCode: 'PARAMETER_NAN',
-                        errorMsg: `Received POST: /api/cyclingRoutes/condition with invalid parameters: ${req.body.minLength}, ${req.body.maxLength}`
+                        errorMsg: `Received POST: /api/cyclingRoutes/length with invalid parameters: ${req.body.minLength}, ${req.body.maxLength}`
                     });
                 }
                 else {
@@ -103,12 +103,12 @@ class Main {
             });
 
             // API route for getting filtered cycling routes based on comfort parameters
-            this.app.post('/api/cyclingRoutes/comfort', (req, res) => {
+            this.app.post('/api/cyclingRoutes/weather', (req, res) => {
                 if (isNaN(req.body.minTemp || isNaN(req.body.maxHumidity))) {
-                    this.logger.warn(`Received POST: /api/cyclingRoutes/comfort with invalid parameters: ${req.body.minLength}, ${req.body.maxLength}`);
+                    this.logger.warn(`Received POST: /api/cyclingRoutes/weather with invalid parameters: ${req.body.minLength}, ${req.body.maxLength}`);
                     res.status(400).json({
                         errorCode: 'PARAMETER_NAN',
-                        errorMsg: `Received POST: /api/cyclingRoutes/comfort with invalid parameters: ${req.body.minLength}, ${req.body.maxLength}`
+                        errorMsg: `Received POST: /api/cyclingRoutes/weather with invalid parameters: ${req.body.minLength}, ${req.body.maxLength}`
                     });
                 }
                 else {

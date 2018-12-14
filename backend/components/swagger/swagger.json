@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "Dokumentácia API pre Smart cycling app",
+    "description": "Hubert's cycling app API documentation",
     "version": "1.0.0",
-    "title": "Smart cycling API"
+    "title": "Hubert's cycling app API"
   },
   "host": "localhost:3000",
   "basePath": "/api",
@@ -36,13 +36,136 @@
         }
       }
     },
-    "/cyclingRoutesFiltered": {
+    "/cyclingRoutes/length": {
       "post": {
         "tags": [
           "Cycling routes - filtered"
         ],
         "summary": "Returns filtered list of cycling routes",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "minLength",
+            "type": "number",
+            "description": "Minimal route length"
+          },
+          {
+            "in": "formData",
+            "name": "maxLength",
+            "type": "number",
+            "description": "Maximal route length"
+          }
+        ],
         "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Route"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request parameters - NaN",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          },
+          "500": {
+            "description": "Internal server error occured",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    },
+    "/cyclingRoutes/weather": {
+      "post": {
+        "tags": [
+          "Cycling routes - filtered"
+        ],
+        "summary": "Returns filtered list of cycling routes",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "minTemp",
+            "type": "number",
+            "description": "Minimal temperature value in Celsius"
+          },
+          {
+            "in": "formData",
+            "name": "maxHumidity",
+            "type": "number",
+            "description": "Maximal humidity value in %"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Route"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request parameters - NaN",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          },
+          "500": {
+            "description": "Internal server error occured",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          }
+        }
+      }
+    },
+    "/weatherPoints/{routeId}": {
+      "get": {
+        "tags": [
+          "Weather data points"
+        ],
+        "summary": "Returns weather data points with actual weather for specific route",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "routeId",
+            "in": "path",
+            "description": "ID of the route",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WeatherPoint"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request parameters - NaN",
+            "schema": {
+              "$ref": "#/definitions/ApiError"
+            }
+          },
           "500": {
             "description": "Internal server error occured",
             "schema": {
@@ -54,76 +177,68 @@
     }
   },
   "definitions": {
-    "Weather": {
+    "WeatherPoint": {
       "type": "object",
       "properties": {
-        "latitude": {
-          "type": "number",
-          "format": "decimal"
-        },
-        "longitude": {
-          "type": "number",
-          "format": "decimal"
-        },
-        "timezone": {
+        "type": {
           "type": "string"
         },
-        "time": {
-          "type": "number",
-          "format": "int"
-        },
-        "summary": {
-          "type": "string",
-          "description": "Weather status described in text"
-        },
-        "icon": {
-          "type": "string",
-          "description": "Icon id that Dark Sky Api uses to graphically describe this type of weather"
-        },
-        "temperature": {
-          "type": "number",
-          "format": "decimal"
-        },
-        "humidity": {
-          "type": "number",
-          "format": "decimal"
-        },
-        "pressure": {
-          "type": "number",
-          "format": "decimal"
-        },
-        "windSpeed": {
-          "type": "number",
-          "format": "decimal"
-        },
-        "visibility": {
-          "type": "number",
-          "format": "decimal"
+        "data": {
+          "type": "object",
+          "properties": {
+            "coordinates": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Point"
+              }
+            },
+            "weather": {
+              "type": "object",
+              "properties": {
+                "temperature": {
+                  "type": "number"
+                },
+                "humidity": {
+                  "type": "number"
+                },
+                "pressure": {
+                  "type": "number"
+                },
+                "icon": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "index": {
+                  "type": "number"
+                }
+              }
+            },
+            "measure_date": {
+              "type": "string"
+            }
+          }
         }
       }
     },
     "Route": {
       "type": "object",
       "properties": {
+        "fid": {
+          "type": "number"
+        },
         "name": {
           "type": "string"
-        },
-        "weather": {
-          "type": "object",
-          "properties": {
-            "weatherPoints": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Weather"
-              }
-            }
-          }
         },
         "route": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/Point"
           }
+        },
+        "length": {
+          "type": "number"
         }
       }
     },
